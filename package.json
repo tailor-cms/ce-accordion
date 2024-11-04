@@ -1,10 +1,10 @@
 {
   "name": "@tailor-cms/ce-accordion",
   "description": "Tailor CMS accordion element",
-  "private": true,
-  "version": "0.0.1",
   "author": "Studion <info@gostudion.com> (https://github.com/tailor-cms)",
+  "version": "0.0.1",
   "type": "module",
+  "private": true,
   "exports": {
     "./edit": {
       "import": "./packages/edit/dist/index.js",
