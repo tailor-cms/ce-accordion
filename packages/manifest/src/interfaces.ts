@@ -1,6 +1,7 @@
 // Example counter component
 export interface ElementData {
-  count: number;
+  embeds: Record<string, any>;
+  items: Record<string, any>;
 }
 
 export interface Element {
