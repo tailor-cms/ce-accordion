@@ -18,8 +18,8 @@ importers:
         specifier: 0.0.2
         version: 0.0.2(@typescript-eslint/eslint-plugin@7.0.2(@typescript-eslint/parser@7.0.2(eslint@8.56.0)(typescript@5.3.3))(eslint@8.56.0)(typescript@5.3.3))(@typescript-eslint/parser@7.0.2(eslint@8.56.0)(typescript@5.3.3))(eslint-config-prettier@9.1.0(eslint@8.56.0))(eslint-config-semistandard@17.0.0(eslint-config-standard@17.1.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.0.2(eslint@8.56.0)(typescript@5.3.3))(eslint@8.56.0))(eslint-plugin-n@16.6.2(eslint@8.56.0))(eslint-plugin-promise@6.1.1(eslint@8.56.0))(eslint@8.56.0))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.0.2(eslint@8.56.0)(typescript@5.3.3))(eslint@8.56.0))(eslint-plugin-n@16.6.2(eslint@8.56.0))(eslint-plugin-promise@6.1.1(eslint@8.56.0))(eslint@8.56.0))(eslint-config-standard@17.1.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.0.2(eslint@8.56.0)(typescript@5.3.3))(eslint@8.56.0))(eslint-plugin-n@16.6.2(eslint@8.56.0))(eslint-plugin-promise@6.1.1(eslint@8.56.0))(eslint@8.56.0))(eslint-plugin-import@2.29.1(@typescript-eslint/parser@7.0.2(eslint@8.56.0)(typescript@5.3.3))(eslint@8.56.0))(eslint-plugin-n@16.6.2(eslint@8.56.0))(eslint-plugin-prettier@5.1.3(eslint-config-prettier@9.1.0(eslint@8.56.0))(eslint@8.56.0)(prettier@3.1.1))(eslint-plugin-promise@6.1.1(eslint@8.56.0))(eslint-plugin-vue@9.21.1(eslint@8.56.0))(eslint-plugin-vuejs-accessibility@2.2.1(eslint@8.56.0))(eslint@8.56.0)
       '@tailor-cms/tce-boot':
-        specifier: 0.6.2
-        version: 0.6.2(@babel/parser@7.23.9)(@types/node@20.11.19)(rollup@4.12.0)
+        specifier: 0.6.3
+        version: 0.6.3(@babel/parser@7.23.9)(@types/node@20.11.19)(rollup@4.12.0)
       '@tailor-cms/tce-display-runtime':
         specifier: 0.6.0
         version: 0.6.0(@babel/parser@7.23.9)(@types/node@20.11.19)(rollup@4.12.0)
@@ -705,14 +705,14 @@ packages:
       eslint-plugin-vue: '>=9.17.0'
       eslint-plugin-vuejs-accessibility: '>=2.2.0'
 
-  '@tailor-cms/tce-boot@0.6.2':
-    resolution: {integrity: sha512-fru5hvjp0rI5FYekBPtf/UzTU4SsqYjs8DjcxaFCQMpBkrammDOyZBarxcsoSzdsnP0PJY2mX8Ae7AxgKl1Cvg==}
+  '@tailor-cms/tce-boot@0.6.3':
+    resolution: {integrity: sha512-O1uWz2Sufs0Nw9wXHYvWesYjdspY9DQ6XDxI8rv7Ysy8TySYTjL8l7AtZ/4ZBzBktBosWFlrUWrebkhYvz5t9w==}
 
   '@tailor-cms/tce-display-runtime@0.6.0':
     resolution: {integrity: sha512-mG0EQcTMPBFolqEvsByPRn14MQaU/6xaksX0dKz7H/8V3MfZOUPKEq1NOeEAiIuxTOYjSPjmf+my4n5q0vf15A==}
 
-  '@tailor-cms/tce-edit-next-runtime@0.6.2':
-    resolution: {integrity: sha512-QZi1UwiiKgGVE5ZgnfUdRLznK5p3Y+Iu3Lh6Im1uSD2xitNrFmeHTMbiJ7iWxLdwIw6gqxvmVQrjtR1fSTPDsw==}
+  '@tailor-cms/tce-edit-next-runtime@0.6.3':
+    resolution: {integrity: sha512-PkIUA/12Rt8cmMGWoyLI78ZkxR9/9mRPVqPUkjZsj9qtuYVZDkn+wkJBwRNpls0qFnqy1LYd5A9lfgfGQMZG9Q==}
 
   '@tailor-cms/tce-edit-runtime@0.5.0':
     resolution: {integrity: sha512-/EOSELuBg+OOH5ItwCZrL2LlX9wSGyjPZexPC4lo2a/njbiorfuAjamy35mEYsG87Ets3kTf1aHrlK++g5sOsw==}
@@ -4103,10 +4103,10 @@ snapshots:
       eslint-plugin-vue: 9.21.1(eslint@8.56.0)
       eslint-plugin-vuejs-accessibility: 2.2.1(eslint@8.56.0)
 
-  '@tailor-cms/tce-boot@0.6.2(@babel/parser@7.23.9)(@types/node@20.11.19)(rollup@4.12.0)':
+  '@tailor-cms/tce-boot@0.6.3(@babel/parser@7.23.9)(@types/node@20.11.19)(rollup@4.12.0)':
     dependencies:
       '@tailor-cms/tce-display-runtime': 0.6.0(@babel/parser@7.23.9)(@types/node@20.11.19)(rollup@4.12.0)
-      '@tailor-cms/tce-edit-next-runtime': 0.6.2(@types/node@20.11.19)
+      '@tailor-cms/tce-edit-next-runtime': 0.6.3(@types/node@20.11.19)
       '@tailor-cms/tce-edit-runtime': 0.5.0(@babel/parser@7.23.9)(@types/node@20.11.19)(rollup@4.12.0)
       '@tailor-cms/tce-preview-runtime': 0.5.0(@types/node@20.11.19)
       '@tailor-cms/tce-server-runtime': 0.5.1(@types/node@20.11.19)
@@ -4179,7 +4179,7 @@ snapshots:
       - terser
       - webpack-plugin-vuetify
 
-  '@tailor-cms/tce-edit-next-runtime@0.6.2(@types/node@20.11.19)':
+  '@tailor-cms/tce-edit-next-runtime@0.6.3(@types/node@20.11.19)':
     dependencies:
       '@mdi/font': 7.4.47
       '@tailor-cms/cek-common': 0.0.3
