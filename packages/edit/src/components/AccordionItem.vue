@@ -1,6 +1,6 @@
 <template>
   <VExpansionPanel bg-color="primary-lighten-5">
-    <VExpansionPanelTitle color="primary-lighten-4" height="68">
+    <VExpansionPanelTitle min-height="68">
       <VTextField
         v-if="isEditingHeader"
         v-model="header"
@@ -10,8 +10,9 @@
         variant="filled"
         density="compact"
         hide-details
+        autofocus
       />
-      <div v-else class="pl-3 text-truncate">{{ item.header }}</div>
+      <div v-else class="pl-3">{{ item.header }}</div>
       <VSpacer />
       <div v-if="!isDisabled" class="d-flex mx-4">
         <template v-if="isEditingHeader">
@@ -66,6 +67,7 @@
         </template>
       </VAlert>
       <EmbeddedContainer
+        :types="embedTypes"
         :container="{ embeds }"
         :is-disabled="isDisabled"
         @delete="deleteEmbed"
@@ -81,6 +83,7 @@ import { cloneDeep, forEach, isEmpty } from 'lodash';
 
 interface Props {
   item: any;
+  embedTypes?: string[] | undefined;
   embeds?: any;
   isFocused?: boolean;
   isDisabled?: boolean;
@@ -131,3 +134,13 @@ const deleteEmbed = (embed: { id: string }) => {
   emit('save', { item, embeds });
 };
 </script>
+
+<style lang="scss" scoped>
+.v-expansion-panel-title {
+  transition: all 0.3s ease;
+}
+
+.v-expansion-panel-title--active {
+  background: rgba(var(--v-theme-primary-lighten-4)) !important;
+}
+</style>

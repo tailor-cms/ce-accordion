@@ -1,6 +1,12 @@
 <template>
   <div class="tce-accordion d-flex flex-column align-center text-center">
-    <VExpansionPanels v-model="expanded" v-if="!isEmpty(elementData.items)" multiple>
+    <VExpansionPanels
+      v-model="expanded"
+      v-if="!isEmpty(elementData.items)"
+      multiple
+      elevation="0"
+      rounded="lg"
+    >
       <VExpandTransition group>
         <AccordionItem
           v-for="(it, id, index) in elementData.items"
@@ -9,6 +15,7 @@
           :embeds="embedsByItem[id]"
           :is-disabled="isDisabled"
           :is-focused="isFocused"
+          :embed-types="embedTypes"
           @save="saveItem"
           @delete="deleteItem(id, index)"
         />
@@ -51,7 +58,12 @@ import reduce from 'lodash/reduce';
 import isEmpty from 'lodash/isEmpty';
 import pull from 'lodash/pull';
 
-const props = defineProps<{ element: Element; isFocused: boolean, isDisabled: boolean }>();
+const props = defineProps<{
+  element: Element;
+  embedTypes?: string[] | undefined;
+  isFocused: boolean;
+  isDisabled: boolean;
+}>();
 const emit = defineEmits(['save', 'link']);
 
 const expanded = ref<number[]>([]);
