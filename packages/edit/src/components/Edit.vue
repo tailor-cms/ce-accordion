@@ -1,6 +1,6 @@
 <template>
-  <div class="tce-accordion d-flex flex-wrap justify-center">
-    <VExpansionPanels multiple>
+  <div class="tce-accordion d-flex flex-column align-center text-center">
+    <VExpansionPanels v-if="!isEmpty(elementData.items)" multiple>
       <AccordionItem
         v-for="it in elementData.items"
         :key="it.id"
@@ -12,7 +12,21 @@
         @delete="deleteItem"
       />
     </VExpansionPanels>
+    <VAlert
+      v-else
+      icon="mdi-information-variant"
+      class="w-100"
+      color="primary-darken-2"
+      variant="tonal"
+      prominent
+    >
+      <template v-if="isDisabled">No items added.</template>
+      <template v-else>
+        Click on the button below in order to create your first item.
+      </template>
+    </VAlert>
     <VBtn
+      v-if="!isDisabled"
       class="mt-4"
       color="primary-darken-3"
       prepend-icon="mdi-plus"
@@ -32,6 +46,7 @@ import { createId as cuid } from '@paralleldrive/cuid2';
 import AccordionItem from './AccordionItem.vue';
 import pick from 'lodash/pick';
 import reduce from 'lodash/reduce';
+import isEmpty from 'lodash/isEmpty';
 
 const props = defineProps<{ element: Element; isFocused: boolean, isDisabled: boolean }>();
 const emit = defineEmits(['save', 'link']);

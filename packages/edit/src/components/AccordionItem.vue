@@ -1,6 +1,6 @@
 <template>
   <VExpansionPanel bg-color="primary-lighten-5">
-    <VExpansionPanelTitle color="primary-lighten-4">
+    <VExpansionPanelTitle color="primary-lighten-4" height="68">
       <VTextField
         v-if="isEditingHeader"
         v-model="header"
@@ -59,7 +59,7 @@
         prominent
       >
         <template v-if="isDisabled">
-          No content alements added to this item.
+          No content elements added to this item.
         </template>
         <template v-else>
           Click the button below to add content element.
