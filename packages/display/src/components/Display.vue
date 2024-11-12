@@ -1,15 +1,17 @@
 <template>
   <div class="tce-root">
     <VExpansionPanels>
-      <VExpansionPanel v-for="item in data.items" :key="item.id">
-        <VExpansionPanelTitle>{{ item.header }}</VExpansionPanelTitle>
-        <VExpansionPanelText>
-          <VAlert v-if="!embeds[item.id].length" type="info" variant="tonal">
-            No content elements added to this item.
-          </VAlert>
-          <EmbeddedContainer v-else :elements="embeds[item.id]" />
-        </VExpansionPanelText>
-      </VExpansionPanel>
+      <VExpandTransition group>
+        <VExpansionPanel v-for="item in data.items" :key="item.id">
+          <VExpansionPanelTitle>{{ item.header }}</VExpansionPanelTitle>
+          <VExpansionPanelText>
+            <VAlert v-if="!embeds[item.id].length" type="info" variant="tonal">
+              No content elements added to this item.
+            </VAlert>
+            <EmbeddedContainer v-else :elements="embeds[item.id]" />
+          </VExpansionPanelText>
+        </VExpansionPanel>
+      </VExpandTransition>
     </VExpansionPanels>
   </div>
 </template>

@@ -1,16 +1,18 @@
 <template>
   <div class="tce-accordion d-flex flex-column align-center text-center">
-    <VExpansionPanels v-if="!isEmpty(elementData.items)" multiple>
-      <AccordionItem
-        v-for="it in elementData.items"
-        :key="it.id"
-        :item="it"
-        :embeds="embedsByItem[it.id]"
-        :is-disabled="isDisabled"
-        :is-focused="isFocused"
-        @save="saveItem"
-        @delete="deleteItem"
-      />
+    <VExpansionPanels v-model="expanded" v-if="!isEmpty(elementData.items)" multiple>
+      <VExpandTransition group>
+        <AccordionItem
+          v-for="(it, id, index) in elementData.items"
+          :key="id"
+          :item="it"
+          :embeds="embedsByItem[id]"
+          :is-disabled="isDisabled"
+          :is-focused="isFocused"
+          @save="saveItem"
+          @delete="deleteItem(id, index)"
+        />
+      </VExpandTransition>
     </VExpansionPanels>
     <VAlert
       v-else
@@ -39,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import cloneDeep from 'lodash/cloneDeep';
 import { Element, ElementData } from '@tailor-cms/ce-accordion-manifest';
 import { createId as cuid } from '@paralleldrive/cuid2';
@@ -47,10 +49,12 @@ import AccordionItem from './AccordionItem.vue';
 import pick from 'lodash/pick';
 import reduce from 'lodash/reduce';
 import isEmpty from 'lodash/isEmpty';
+import pull from 'lodash/pull';
 
 const props = defineProps<{ element: Element; isFocused: boolean, isDisabled: boolean }>();
 const emit = defineEmits(['save', 'link']);
 
+const expanded = ref<number[]>([]);
 const elementData = reactive<ElementData>(cloneDeep(props.element.data));
 
 const embedsByItem = computed(() => {
@@ -72,11 +76,12 @@ const saveItem = ({ item, embeds = {} }: any) => {
   emit('save', elementData);
 };
 
-const deleteItem = (itemId: string) => {
-  Object.keys(elementData.items[itemId].body).forEach((embedId) => {
+const deleteItem = (id: string, index: number) => {
+  Object.keys(elementData.items[id].body).forEach((embedId) => {
     delete elementData.embeds[embedId];
   });
-  delete elementData.items[itemId];
+  delete elementData.items[id];
+  if (expanded.value.includes(index)) pull(expanded.value, index);
   emit('save', elementData);
 };
 </script>

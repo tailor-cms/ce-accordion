@@ -119,7 +119,7 @@ const deleteItem = () => {
   return eventBus.emit('showConfirmationModal', {
     title: 'Delete accordion item',
     message: 'Are you sure you want to delete selected item?',
-    action: () =>  emit('delete', props.item.id),
+    action: () =>  emit('delete'),
   });
 };
 
