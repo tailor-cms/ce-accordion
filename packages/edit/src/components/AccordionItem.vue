@@ -137,6 +137,7 @@ const deleteEmbed = (embed: { id: string }) => {
 
 <style lang="scss" scoped>
 .v-expansion-panel-title {
+  font-size: 1rem;
   transition: all 0.3s ease;
 }
 
