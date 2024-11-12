@@ -1,42 +1,73 @@
 <template>
-  <div class="tce-container">
-    <div>This is Edit version of the content element id: {{ element?.id }}</div>
-    <div class="mt-6 mb-2">
-      Counter:
-      <span class="font-weight-bold">{{ element.data.count }}</span>
-    </div>
-    <button @click="increment">Increment</button>
+  <div class="tce-accordion d-flex flex-wrap justify-center">
+    <VExpansionPanels multiple>
+      <AccordionItem
+        v-for="it in elementData.items"
+        :key="it.id"
+        :item="it"
+        :embeds="embedsByItem[it.id]"
+        :is-disabled="isDisabled"
+        :is-focused="isFocused"
+        @save="saveItem"
+        @delete="deleteItem"
+      />
+    </VExpansionPanels>
+    <VBtn
+      class="mt-4"
+      color="primary-darken-3"
+      prepend-icon="mdi-plus"
+      variant="tonal"
+      @click="add"
+    >
+      Accordion item
+    </VBtn>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { defineEmits, defineProps } from 'vue';
-import { Element } from '@tailor-cms/ce-accordion-manifest';
+<script setup lang="ts">
+import { computed, reactive } from 'vue';
+import cloneDeep from 'lodash/cloneDeep';
+import { Element, ElementData } from '@tailor-cms/ce-accordion-manifest';
+import { createId as cuid } from '@paralleldrive/cuid2';
+import AccordionItem from './AccordionItem.vue';
+import pick from 'lodash/pick';
+import reduce from 'lodash/reduce';
 
-const emit = defineEmits(['save']);
-const props = defineProps<{ element: Element; isFocused: boolean }>();
+const props = defineProps<{ element: Element; isFocused: boolean, isDisabled: boolean }>();
+const emit = defineEmits(['save', 'link']);
 
-const increment = () => {
-  const { data } = props.element;
-  const count = data.count + 1;
-  emit('save', { ...data, count });
+const elementData = reactive<ElementData>(cloneDeep(props.element.data));
+
+const embedsByItem = computed(() => {
+  return reduce(elementData.items, (acc, item) => {
+    acc[item.id] = pick(elementData.embeds, Object.keys(item.body));
+    return acc;
+  }, {} as any);
+});
+
+const add = () => {
+  const id = cuid();
+  elementData.items[id] = { id, header: 'Header', body: {} };
+  emit('save', elementData);
+};
+
+const saveItem = ({ item, embeds = {} }: any) => {
+  Object.assign(elementData.items, { [item.id]: item });
+  Object.assign(elementData.embeds, embeds);
+  emit('save', elementData);
+};
+
+const deleteItem = (itemId: string) => {
+  Object.keys(elementData.items[itemId].body).forEach((embedId) => {
+    delete elementData.embeds[embedId];
+  });
+  delete elementData.items[itemId];
+  emit('save', elementData);
 };
 </script>
 
-<style scoped>
-.tce-container {
-  background-color: transparent;
-  margin-top: 1rem;
-  padding: 1.5rem;
-  border: 2px dashed #888;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 1rem;
-}
-
-button {
-  margin: 1rem 0 0 0;
-  padding: 0.25rem 1rem;
-  background-color: #eee;
-  border: 1px solid #444;
+<style lang="scss" scoped>
+.tce-accordion {
+  text-align: left;
 }
 </style>
