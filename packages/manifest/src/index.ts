@@ -37,6 +37,7 @@ const manifest: ElementManifest = {
   type,
   version: '1.0',
   name,
+  isComposite: true,
   ssr: false,
   initState,
   ui,
