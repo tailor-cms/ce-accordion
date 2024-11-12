@@ -1,25 +1,28 @@
 <template>
   <div class="tce-root">
-    <p>This is the Display version of the content element id: {{ id }}</p>
-    <div class="mt-6 mb-2">
-      Counter:
-      <span class="font-weight-bold">{{ data.count }}</span>
-    </div>
-    <v-btn class="my-6" @click="submit">Update user state</v-btn>
-    <div>
-      <div class="mb-1 text-subtitle-2">User state:</div>
-      <pre class="text-body-2">{{ userState }}</pre>
-    </div>
+    <VExpansionPanels>
+      <VExpansionPanel v-for="item in data.items" :key="item.id">
+        <VExpansionPanelTitle>{{ item.header }}</VExpansionPanelTitle>
+        <VExpansionPanelText>
+          <EmbeddedContainer :elements="getElements(item, data.embeds)" />
+        </VExpansionPanelText>
+      </VExpansionPanel>
+    </VExpansionPanels>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ElementData } from '@tailor-cms/ce-accordion-manifest';
+import map from 'lodash/map';
+import sortBy from 'lodash/sortBy';
 
-const props = defineProps<{ id: number; data: ElementData; userState: any }>();
-const emit = defineEmits(['interaction']);
+function getElements(item: any, embeds: any) {
+  const elements = map(item.body, (_, id) => embeds[id]);
+  return sortBy(elements, 'position');
+}
 
-const submit = () => emit('interaction', { id: props.id });
+defineProps<{ data: ElementData; userState: any }>();
+defineEmits(['interaction']);
 </script>
 
 <style scoped>

@@ -11,6 +11,12 @@ module.exports = {
   },
   ignorePatterns: ['**/components.d.ts', 'dist/**'],
   rules: {
+    'vue/no-undef-components': [
+      'error',
+      {
+        ignores: ['EmeddedContainer'],
+      },
+    ],
     'vue/multi-word-component-names': [
       'error',
       {
