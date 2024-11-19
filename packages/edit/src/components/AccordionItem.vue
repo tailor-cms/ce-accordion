@@ -2,8 +2,8 @@
   <VExpansionPanel>
     <VExpansionPanelTitle color="primary-lighten-5" min-height="68">
       <VTextField
-        v-if="isEditingHeader"
-        v-model="header"
+        v-if="isEditing"
+        v-model="title"
         @click.stop
         @keyup.space.prevent
         class="w-100"
@@ -12,23 +12,23 @@
         hide-details
         autofocus
       />
-      <div v-else class="pl-3">{{ item.header }}</div>
+      <div v-else class="pl-3">{{ item.title }}</div>
       <VSpacer />
       <div v-if="!isDisabled" class="d-flex mx-4">
-        <template v-if="isEditingHeader">
+        <template v-if="isEditing">
           <VBtn
             color="primary-darken-2"
             density="comfortable"
             icon="mdi-check"
             variant="text"
-            @click.stop="saveHeader"
+            @click.stop="saveTitle"
           />
           <VBtn
             color="primary-darken-2"
             density="comfortable"
             icon="mdi-close"
             variant="text"
-            @click.stop="isEditingHeader = false"
+            @click.stop="isEditing = false"
           />
         </template>
         <template v-else>
@@ -38,7 +38,7 @@
             density="comfortable"
             icon="mdi-pencil"
             variant="text"
-            @click.stop="editHeader"
+            @click.stop="editTitle"
           />
           <VBtn
             v-tooltip="'Delete item'"
@@ -79,7 +79,9 @@
 
 <script lang="ts" setup>
 import { ref, computed, inject } from 'vue';
-import { cloneDeep, forEach, isEmpty } from 'lodash';
+import pull from 'lodash/pull';
+import cloneDeep from 'lodash/cloneDeep';
+import isEmpty from 'lodash/isEmpty';
 
 interface Props {
   item: any;
@@ -97,25 +99,24 @@ const emit = defineEmits(['save', 'delete']);
 
 const eventBus = inject('$eventBus') as any;
 
-const header = ref(props.item.header);
-const isEditingHeader = ref(false);
+const title = ref(props.item.title);
+const isEditing = ref(false);
 
 const hasElements = computed(() => !isEmpty(props.embeds));
 
-const editHeader = () => {
-  isEditingHeader.value = true;
-  header.value = props.item.header;
+const editTitle = () => {
+  isEditing.value = true;
+  title.value = props.item.title;
 };
 
-const saveHeader = () => {
-  isEditingHeader.value = false;
-  save({ ...props.item, header: header.value }, props.embeds);
+const saveTitle = () => {
+  isEditing.value = false;
+  save({ ...props.item, title: title.value }, props.embeds);
 };
 
 const save = (item: any, { embeds }: any) => {
   item = cloneDeep(item);
-  forEach(embeds, (it) => (item.body[it.id] = true));
-  console.log('###',  { item, embeds });
+  item.elementIds = Object.values(embeds).map((it: any) => it.id);
   emit('save', { item, embeds });
 };
 
@@ -131,7 +132,7 @@ const deleteEmbed = (embed: { id: string }) => {
   const embeds = cloneDeep(props.embeds);
   const item = cloneDeep(props.item);
   delete embeds[embed.id];
-  delete item.body[embed.id];
+  pull(item.elementIds, embed.id);
   emit('save', { item, embeds });
 };
 </script>

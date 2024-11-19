@@ -19,7 +19,7 @@ export const name = 'Accordion';
 export const initState: DataInitializer = (): ElementData => ({
   embeds: {},
   items: {
-    [id]: { id, header: 'Header', body: {} },
+    [id]: { id, title: 'title', elementIds: [] },
   },
 });
 

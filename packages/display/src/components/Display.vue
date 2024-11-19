@@ -3,7 +3,7 @@
     <VExpansionPanels>
       <VExpandTransition group>
         <VExpansionPanel v-for="item in data.items" :key="item.id">
-          <VExpansionPanelTitle>{{ item.header }}</VExpansionPanelTitle>
+          <VExpansionPanelTitle>{{ item.title }}</VExpansionPanelTitle>
           <VExpansionPanelText>
             <VAlert v-if="!embeds[item.id].length" type="info" variant="tonal">
               No content elements added to this item.
@@ -29,8 +29,7 @@ defineEmits(['interaction']);
 const embeds = computed(() => {
   const { items, embeds } = props.data;
   return reduce(items, (acc, item) => {
-    const embedIds = Object.keys(item.body);
-    const itemEmbeds = filter(embeds, (it) => embedIds.includes(it.id));
+    const itemEmbeds = filter(embeds, (it) => item.elementIds.includes(it.id));
     acc[item.id] = sortBy(itemEmbeds, 'position');
     return acc;
   }, {} as Record<string, any[]>);

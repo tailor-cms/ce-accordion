@@ -71,14 +71,14 @@ const elementData = reactive<ElementData>(cloneDeep(props.element.data));
 
 const embedsByItem = computed(() => {
   return reduce(elementData.items, (acc, item) => {
-    acc[item.id] = pick(elementData.embeds, Object.keys(item.body));
+    acc[item.id] = pick(elementData.embeds, item.elementIds);
     return acc;
   }, {} as any);
 });
 
 const add = () => {
   const id = uuid();
-  elementData.items[id] = { id, header: 'Header', body: {} };
+  elementData.items[id] = { id, title: 'Title', elementIds: [] };
   emit('save', elementData);
 };
 
@@ -89,7 +89,7 @@ const saveItem = ({ item, embeds = {} }: any) => {
 };
 
 const deleteItem = (id: string, index: number) => {
-  Object.keys(elementData.items[id].body).forEach((embedId) => {
+  elementData.items[id].elementIds.forEach((embedId) => {
     delete elementData.embeds[embedId];
   });
   delete elementData.items[id];
