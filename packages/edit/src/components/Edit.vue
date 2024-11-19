@@ -36,10 +36,10 @@
     </VAlert>
     <VBtn
       v-if="!isDisabled"
-      class="mt-4"
-      color="primary-darken-3"
+      class="mt-6"
+      color="primary-darken-4"
       prepend-icon="mdi-plus"
-      variant="tonal"
+      variant="text"
       @click="add"
     >
       Accordion item
@@ -51,12 +51,12 @@
 import { computed, reactive, ref } from 'vue';
 import cloneDeep from 'lodash/cloneDeep';
 import { Element, ElementData } from '@tailor-cms/ce-accordion-manifest';
-import { createId as cuid } from '@paralleldrive/cuid2';
 import AccordionItem from './AccordionItem.vue';
 import pick from 'lodash/pick';
 import reduce from 'lodash/reduce';
 import isEmpty from 'lodash/isEmpty';
 import pull from 'lodash/pull';
+import { v4 as uuid } from 'uuid';
 
 const props = defineProps<{
   element: Element;
@@ -77,7 +77,7 @@ const embedsByItem = computed(() => {
 });
 
 const add = () => {
-  const id = cuid();
+  const id = uuid();
   elementData.items[id] = { id, header: 'Header', body: {} };
   emit('save', elementData);
 };
@@ -101,5 +101,13 @@ const deleteItem = (id: string, index: number) => {
 <style lang="scss" scoped>
 .tce-accordion {
   text-align: left;
+  margin: 1rem 0;
+
+  :deep(.v-expansion-panel-text) {
+    border-bottom-right-radius: inherit;
+    border-bottom-left-radius: inherit;
+    border: 2px solid rgb(var(--v-theme-primary-lighten-5));
+    border-top: none !important;
+  }
 }
 </style>

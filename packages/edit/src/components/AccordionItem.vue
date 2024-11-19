@@ -1,6 +1,6 @@
 <template>
-  <VExpansionPanel bg-color="primary-lighten-5">
-    <VExpansionPanelTitle min-height="68">
+  <VExpansionPanel>
+    <VExpansionPanelTitle color="primary-lighten-5" min-height="68">
       <VTextField
         v-if="isEditingHeader"
         v-model="header"
@@ -115,6 +115,7 @@ const saveHeader = () => {
 const save = (item: any, { embeds }: any) => {
   item = cloneDeep(item);
   forEach(embeds, (it) => (item.body[it.id] = true));
+  console.log('###',  { item, embeds });
   emit('save', { item, embeds });
 };
 
@@ -134,14 +135,3 @@ const deleteEmbed = (embed: { id: string }) => {
   emit('save', { item, embeds });
 };
 </script>
-
-<style lang="scss" scoped>
-.v-expansion-panel-title {
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.v-expansion-panel-title--active {
-  background: rgba(var(--v-theme-primary-lighten-4)) !important;
-}
-</style>
