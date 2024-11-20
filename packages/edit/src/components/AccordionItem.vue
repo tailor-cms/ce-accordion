@@ -1,55 +1,69 @@
 <template>
   <VExpansionPanel>
-    <VExpansionPanelTitle color="primary-lighten-5" min-height="68">
-      <VTextField
-        v-if="isEditing"
-        v-model="title"
-        @click.stop
-        @keyup.space.prevent
-        class="w-100"
-        variant="filled"
-        density="compact"
-        hide-details
-        autofocus
-      />
-      <div v-else class="pl-3">{{ item.title }}</div>
-      <VSpacer />
-      <div v-if="!isDisabled" class="d-flex mx-4">
-        <template v-if="isEditing">
-          <VBtn
-            color="primary-darken-2"
-            density="comfortable"
-            icon="mdi-check"
-            variant="text"
-            @click.stop="saveTitle"
-          />
-          <VBtn
-            color="primary-darken-2"
-            density="comfortable"
-            icon="mdi-close"
-            variant="text"
-            @click.stop="isEditing = false"
-          />
-        </template>
-        <template v-else>
-          <VBtn
-            v-tooltip="'Edit heading'"
-            color="primary-darken-2"
-            density="comfortable"
-            icon="mdi-pencil"
-            variant="text"
-            @click.stop="editTitle"
-          />
-          <VBtn
-            v-tooltip="'Delete item'"
-            color="primary-darken-2"
-            density="comfortable"
-            icon="mdi-delete"
-            variant="text"
-            @click.stop="deleteItem"
-          />
-        </template>
-      </div>
+    <VExpansionPanelTitle
+      class="py-0 px-4"
+      color="primary-lighten-5"
+      min-height="56"
+    >
+      <VForm
+        ref="form"
+        validate-on="submit"
+        class="d-flex align-center w-100"
+        @submit.prevent="saveTitle"
+      >
+        <VTextField
+          v-if="isEditing"
+          v-model="title"
+          @click.stop
+          @keyup.space.prevent
+          class="w-100"
+          density="compact"
+          hide-details="auto"
+          variant="outlined"
+          bg-color="white"
+          autofocus
+          :rules="[(val: string) => !!val || 'Title is required']"
+        />
+        <div v-else class="accordion-title ml-4">{{ item.title }}</div>
+        <VSpacer />
+        <div v-if="!isDisabled" class="d-flex mx-2 ga-1">
+          <template v-if="isEditing">
+            <VBtn
+              color="primary-darken-2"
+              variant="text"
+              @click.stop="isEditing = false"
+            >
+              Cancel
+            </VBtn>
+            <VBtn
+              color="primary-darken-2"
+              type="submit"
+              variant="tonal"
+              @click.stop
+            >
+              Save
+            </VBtn>
+          </template>
+          <template v-else>
+            <VBtn
+              v-tooltip="'Edit heading'"
+              color="primary-darken-2"
+              density="comfortable"
+              icon="mdi-pencil"
+              variant="text"
+              @click.stop="isEditing = true"
+            />
+            <VBtn
+              v-tooltip="'Delete item'"
+              color="primary-darken-2"
+              density="comfortable"
+              icon="mdi-delete"
+              variant="text"
+              @click.stop="deleteItem"
+            />
+          </template>
+        </div>
+      </VForm>
     </VExpansionPanelTitle>
     <VExpansionPanelText class="text-center">
       <VAlert
@@ -71,7 +85,7 @@
         :container="{ embeds }"
         :is-disabled="isDisabled"
         @delete="deleteEmbed"
-        @save="save(item, $event)"
+        @save="save(item, $event.embeds)"
       />
     </VExpansionPanelText>
   </VExpansionPanel>
@@ -99,22 +113,20 @@ const emit = defineEmits(['save', 'delete']);
 
 const eventBus = inject('$eventBus') as any;
 
-const title = ref(props.item.title);
 const isEditing = ref(false);
+const form = ref<HTMLFormElement>();
+const title = ref(props.item.title);
 
 const hasElements = computed(() => !isEmpty(props.embeds));
 
-const editTitle = () => {
-  isEditing.value = true;
-  title.value = props.item.title;
-};
-
-const saveTitle = () => {
+const saveTitle = async () => {
+  const { valid } = await form.value?.validate();
+  if (!valid) return;
   isEditing.value = false;
   save({ ...props.item, title: title.value }, props.embeds);
 };
 
-const save = (item: any, { embeds }: any) => {
+const save = (item: any, embeds: any) => {
   item = cloneDeep(item);
   item.elementIds = Object.values(embeds).map((it: any) => it.id);
   emit('save', { item, embeds });
@@ -136,3 +148,29 @@ const deleteEmbed = (embed: { id: string }) => {
   emit('save', { item, embeds });
 };
 </script>
+
+<style lang="scss" scoped>
+.accordion-title {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.009375em;
+}
+
+.v-input {
+  position: relative;
+
+  :deep(.v-input__details) {
+    position: absolute;
+    padding: 0 !important;
+    z-index: 9;
+
+    .v-messages__message {
+      margin-top: 0.25rem;
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      background: #424242;
+      color: #fff !important;
+    }
+  }
+  }
+</style>
