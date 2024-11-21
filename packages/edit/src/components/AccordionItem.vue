@@ -1,73 +1,78 @@
 <template>
   <VExpansionPanel :value="item.id">
-    <VExpansionPanelTitle
-      class="pa-2 pr-4"
-      color="primary-lighten-5"
-      min-height="56"
-    >
-      <VForm
-        ref="form"
-        validate-on="submit"
-        class="d-flex align-center w-100"
-        @submit.prevent="saveTitle"
+    <VHover v-slot="{ isHovering, props: hoverProps }">
+      <VExpansionPanelTitle
+        v-bind="hoverProps"
+        class="pa-2 pr-4"
+        color="primary-lighten-5"
+        min-height="56"
       >
-        <span v-if="!isDisabled" class="accordion-drag-handle" @drag.stop.prevent>
-          <VIcon icon="mdi-drag-vertical" />
-        </span>
-        <VTextField
-          v-if="isEditing"
-          v-model="title"
-          @click.stop
-          @keyup.space.prevent
-          class="w-100"
-          density="compact"
-          hide-details="auto"
-          variant="outlined"
-          placeholder="Accordion item title..."
-          bg-color="white"
-          autofocus
-          :rules="[(val: string) => !!val || 'Title is required']"
-        />
-        <div v-else class="accordion-title ml-4">{{ item.title }}</div>
-        <VSpacer />
-        <div v-if="!isDisabled" class="d-flex mx-2 ga-1">
-          <template v-if="isEditing">
-            <VBtn
-              :disabled="!item.title"
-              color="primary-darken-2"
-              text="Cancel"
-              variant="text"
-              @click.stop="cancel"
-            />
-            <VBtn
-              color="primary-darken-2"
-              type="submit"
-              text="Save"
-              variant="tonal"
-              @click.stop
-            />
-          </template>
-          <template v-else>
-            <VBtn
-              v-tooltip:bottom="{ text: 'Edit title', openDelay: 300 }"
-              color="primary-darken-2"
-              density="comfortable"
-              icon="mdi-square-edit-outline"
-              variant="text"
-              @click.stop="isEditing = true"
-            />
-            <VBtn
-              v-tooltip:bottom="{ text: 'Delete item', openDelay: 300 }"
-              color="primary-darken-2"
-              density="comfortable"
-              icon="mdi-delete-outline"
-              variant="text"
-              @click.stop="deleteItem"
-            />
-          </template>
-        </div>
-      </VForm>
-    </VExpansionPanelTitle>
+        <VForm
+          ref="form"
+          validate-on="submit"
+          class="d-flex align-center w-100"
+          @submit.prevent="saveTitle"
+        >
+          <span v-if="!isDisabled" class="accordion-drag-handle" @drag.stop.prevent>
+            <VIcon icon="mdi-drag-vertical" />
+          </span>
+          <VTextField
+            v-if="isEditing"
+            v-model="title"
+            @click.stop
+            @keyup.space.prevent
+            class="w-100"
+            density="compact"
+            hide-details="auto"
+            variant="outlined"
+            placeholder="Accordion item title..."
+            bg-color="white"
+            autofocus
+            :rules="[(val: string) => !!val || 'Title is required']"
+          />
+          <div v-else class="accordion-title ml-4">{{ item.title }}</div>
+          <VSpacer />
+          <div v-if="!isDisabled" class="d-flex mx-2 ga-1">
+            <template v-if="isEditing">
+              <VBtn
+                :disabled="!item.title"
+                color="primary-darken-2"
+                text="Cancel"
+                variant="text"
+                @click.stop="cancel"
+              />
+              <VBtn
+                color="primary-darken-2"
+                type="submit"
+                text="Save"
+                variant="tonal"
+                @click.stop
+              />
+            </template>
+            <VFadeTransition v-else group>
+              <template v-if="isHovering || isExpanded">
+                <VBtn
+                  v-tooltip:bottom="{ text: 'Edit title', openDelay: 300 }"
+                  color="primary-darken-2"
+                  density="comfortable"
+                  icon="mdi-square-edit-outline"
+                  variant="tonal"
+                  @click.stop="isEditing = true"
+                />
+                <VBtn
+                  v-tooltip:bottom="{ text: 'Delete item', openDelay: 300 }"
+                  color="secondary-lighten-2"
+                  density="comfortable"
+                  icon="mdi-delete-outline"
+                  variant="tonal"
+                  @click.stop="deleteItem"
+                />
+              </template>
+            </VFadeTransition>
+          </div>
+        </VForm>
+      </VExpansionPanelTitle>
+    </VHover>
     <VExpansionPanelText class="text-center">
       <VAlert
         v-if="!hasElements"
@@ -107,11 +112,14 @@ interface Props {
   embeds?: any;
   isFocused?: boolean;
   isDisabled?: boolean;
+  isExpanded?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   embeds: () => {},
   isDisabled: false,
+  isFocused: false,
+  isExpanded: false,
 });
 const emit = defineEmits(['save', 'delete']);
 

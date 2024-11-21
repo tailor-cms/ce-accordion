@@ -15,6 +15,7 @@
           :embeds="embedsByItem[element.id]"
           :is-disabled="isDisabled"
           :is-focused="isFocused"
+          :is-expanded="expanded.includes(element.id)"
           :embed-types="embedTypes"
           @save="saveItem($event, index)"
           @delete="deleteItem(element.id, index)"
