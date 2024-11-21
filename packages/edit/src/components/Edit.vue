@@ -9,15 +9,16 @@
     >
       <VExpandTransition v-if="elementData.items.length > 0" group>
         <AccordionItem
-          v-for="(it, index) in elementData.items"
-          :key="it.id"
+          v-for="(item, index) in elementData.items"
+          :key="item.id"
           :embed-types="embedTypes"
-          :embeds="embedsByItem[it.id]"
+          :embeds="embedsByItem[item.id]"
           :is-disabled="isDisabled"
-          :is-expanded="expanded.includes(it.id)"
+          :is-expanded="expanded.includes(item.id)"
           :is-focused="isFocused"
-          :item="element"
-          @delete="deleteItem(it.id, index)"
+          :item="item"
+          @delete="deleteItem(item.id, index)"
+          @expand="expanded.push(item.id)"
           @save="saveItem($event, index)"
         />
       </VExpandTransition>
@@ -55,7 +56,6 @@ import cloneDeep from 'lodash/cloneDeep';
 import isNumber from 'lodash/isNumber';
 import pick from 'lodash/pick';
 import pull from 'lodash/pull';
-import reduce from 'lodash/reduce';
 import Sortable from 'sortablejs';
 import uniqueId from 'lodash/uniqueId';
 import { v4 as uuid } from 'uuid';
@@ -75,22 +75,16 @@ const elementData = reactive<ElementData>(cloneDeep(props.element.data));
 const panels = ref();
 const sortable = ref();
 
-const embedsByItem = computed(() => {
-  return reduce(
-    elementData.items,
-    (acc, item) => {
-      acc[item.id] = pick(elementData.embeds, item.elementIds);
-      return acc;
-    },
-    {} as any,
-  );
-});
+const embedsByItem = computed(() =>
+  elementData.items.reduce((acc, item) => {
+    acc[item.id] = pick(elementData.embeds, item.elementIds);
+    return acc;
+  }, {} as any),
+);
 
 const add = () => {
   const id = uuid();
   elementData.items.push({ id, elementIds: [] });
-  expanded.value.push(id);
-  emit('save', elementData);
 };
 
 const saveItem = ({ item, embeds = {} }: any, index: number) => {

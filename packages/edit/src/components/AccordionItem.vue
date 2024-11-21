@@ -1,5 +1,5 @@
 <template>
-  <VExpansionPanel :value="item.id">
+  <VExpansionPanel :hide-actions="isNew" :readonly="isNew" :value="item.id">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VExpansionPanelTitle
         v-bind="hoverProps"
@@ -38,7 +38,6 @@
           <div v-if="!isDisabled" class="d-flex mx-2 ga-1">
             <template v-if="isEditing">
               <VBtn
-                :disabled="!item.title"
                 color="primary-darken-2"
                 text="Cancel"
                 variant="text"
@@ -124,7 +123,7 @@ const props = withDefaults(defineProps<Props>(), {
   isFocused: false,
   isExpanded: false,
 });
-const emit = defineEmits(['save', 'delete']);
+const emit = defineEmits(['save', 'expand', 'delete']);
 
 const eventBus = inject('$eventBus') as any;
 
@@ -132,9 +131,11 @@ const isEditing = ref(!props.item.title);
 const form = ref<HTMLFormElement>();
 const title = ref(props.item.title);
 
+const isNew = computed(() => !props.item.title);
 const hasElements = computed(() => !isEmpty(props.embeds));
 
 const cancel = () => {
+  if (isNew.value) return emit('delete');
   title.value = props.item.title;
   isEditing.value = false;
 };
@@ -145,6 +146,7 @@ const saveTitle = async () => {
   isEditing.value = false;
   const item = { ...props.item, title: title.value };
   emit('save', { item, embeds: props.embeds });
+  if (isNew.value) emit('expand');
 };
 
 const saveEmbed = (embeds: any) => {
