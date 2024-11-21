@@ -20,7 +20,6 @@
 import { ElementData } from '@tailor-cms/ce-accordion-manifest';
 import sortBy from 'lodash/sortBy';
 import { computed } from 'vue';
-import reduce from 'lodash/reduce';
 import { filter } from 'lodash';
 
 const props = defineProps<{ data: ElementData; userState: any }>();
@@ -28,7 +27,7 @@ defineEmits(['interaction']);
 
 const embeds = computed(() => {
   const { items, embeds } = props.data;
-  return reduce(items, (acc, item) => {
+  return items.reduce((acc, item) => {
     const itemEmbeds = filter(embeds, (it) => item.elementIds.includes(it.id));
     acc[item.id] = sortBy(itemEmbeds, 'position');
     return acc;

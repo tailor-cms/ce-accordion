@@ -1,7 +1,7 @@
 <template>
-  <VExpansionPanel>
+  <VExpansionPanel :value="item.id">
     <VExpansionPanelTitle
-      class="py-0 px-4"
+      class="pa-2 pr-4"
       color="primary-lighten-5"
       min-height="56"
     >
@@ -11,6 +11,9 @@
         class="d-flex align-center w-100"
         @submit.prevent="saveTitle"
       >
+        <span v-if="!isDisabled" class="accordion-drag-handle" @drag.stop.prevent>
+          <VIcon icon="mdi-drag-vertical" />
+        </span>
         <VTextField
           v-if="isEditing"
           v-model="title"
@@ -20,6 +23,7 @@
           density="compact"
           hide-details="auto"
           variant="outlined"
+          placeholder="Accordion item title..."
           bg-color="white"
           autofocus
           :rules="[(val: string) => !!val || 'Title is required']"
@@ -29,35 +33,34 @@
         <div v-if="!isDisabled" class="d-flex mx-2 ga-1">
           <template v-if="isEditing">
             <VBtn
+              :disabled="!item.title"
               color="primary-darken-2"
+              text="Cancel"
               variant="text"
-              @click.stop="isEditing = false"
-            >
-              Cancel
-            </VBtn>
+              @click.stop="cancel"
+            />
             <VBtn
               color="primary-darken-2"
               type="submit"
+              text="Save"
               variant="tonal"
               @click.stop
-            >
-              Save
-            </VBtn>
+            />
           </template>
           <template v-else>
             <VBtn
-              v-tooltip="'Edit heading'"
+              v-tooltip:bottom="{ text: 'Edit title', openDelay: 300 }"
               color="primary-darken-2"
               density="comfortable"
-              icon="mdi-pencil"
+              icon="mdi-square-edit-outline"
               variant="text"
               @click.stop="isEditing = true"
             />
             <VBtn
-              v-tooltip="'Delete item'"
+              v-tooltip:bottom="{ text: 'Delete item', openDelay: 300 }"
               color="primary-darken-2"
               density="comfortable"
-              icon="mdi-delete"
+              icon="mdi-delete-outline"
               variant="text"
               @click.stop="deleteItem"
             />
@@ -85,7 +88,7 @@
         :container="{ embeds }"
         :is-disabled="isDisabled"
         @delete="deleteEmbed"
-        @save="save(item, $event.embeds)"
+        @save="saveEmbed($event.embeds)"
       />
     </VExpansionPanelText>
   </VExpansionPanel>
@@ -96,6 +99,7 @@ import { ref, computed, inject } from 'vue';
 import pull from 'lodash/pull';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
+import map from 'lodash/map';
 
 interface Props {
   item: any;
@@ -113,27 +117,33 @@ const emit = defineEmits(['save', 'delete']);
 
 const eventBus = inject('$eventBus') as any;
 
-const isEditing = ref(false);
+const isEditing = ref(!props.item.title);
 const form = ref<HTMLFormElement>();
 const title = ref(props.item.title);
 
 const hasElements = computed(() => !isEmpty(props.embeds));
 
+const cancel = () => {
+  title.value = props.item.title;
+  isEditing.value = false;
+};
+
 const saveTitle = async () => {
   const { valid } = await form.value?.validate();
   if (!valid) return;
   isEditing.value = false;
-  save({ ...props.item, title: title.value }, props.embeds);
+  const item = { ...props.item, title: title.value };
+  emit('save', { item, embeds: props.embeds });
 };
 
-const save = (item: any, embeds: any) => {
-  item = cloneDeep(item);
-  item.elementIds = Object.values(embeds).map((it: any) => it.id);
+const saveEmbed = (embeds: any) => {
+  const item = cloneDeep(props.item);
+  item.elementIds = map(embeds, 'id');
   emit('save', { item, embeds });
 };
 
 const deleteItem = () => {
-  return eventBus.emit('showConfirmationModal', {
+  return eventBus.channel('app').emit('showConfirmationModal', {
     title: 'Delete accordion item',
     message: 'Are you sure you want to delete selected item?',
     action: () =>  emit('delete'),

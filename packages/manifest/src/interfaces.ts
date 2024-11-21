@@ -1,12 +1,12 @@
 interface AccordionItem {
   id: string;
-  title: string;
+  title?: string;
   elementIds: string[];
 }
 
 export interface ElementData {
   embeds: Record<string, any>;
-  items: Record<string, AccordionItem>;
+  items: AccordionItem[];
 }
 
 export interface Element {

@@ -1,28 +1,28 @@
 <template>
   <div class="tce-accordion d-flex flex-column align-center text-center">
     <VExpansionPanels
+      ref="panels"
       v-model="expanded"
-      v-if="!isEmpty(elementData.items)"
       multiple
       elevation="0"
       rounded="lg"
     >
-      <VExpandTransition group>
+      <VExpandTransition v-if="elementData.items.length > 0" group>
         <AccordionItem
-          v-for="(it, id, index) in elementData.items"
-          :key="id"
-          :item="it"
-          :embeds="embedsByItem[id]"
+          v-for="(element, index) in elementData.items"
+          :key="element.id"
+          :item="element"
+          :embeds="embedsByItem[element.id]"
           :is-disabled="isDisabled"
           :is-focused="isFocused"
           :embed-types="embedTypes"
-          @save="saveItem"
-          @delete="deleteItem(id, index)"
+          @save="saveItem($event, index)"
+          @delete="deleteItem(element.id, index)"
         />
       </VExpandTransition>
     </VExpansionPanels>
     <VAlert
-      v-else
+      v-if="elementData.items.length === 0"
       icon="mdi-information-variant"
       class="w-100"
       color="primary-darken-2"
@@ -48,15 +48,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import cloneDeep from 'lodash/cloneDeep';
 import { Element, ElementData } from '@tailor-cms/ce-accordion-manifest';
 import AccordionItem from './AccordionItem.vue';
+import Sortable from "sortablejs";
 import pick from 'lodash/pick';
 import reduce from 'lodash/reduce';
-import isEmpty from 'lodash/isEmpty';
 import pull from 'lodash/pull';
+import isNumber from 'lodash/isNumber';
 import { v4 as uuid } from 'uuid';
+import uniqueId from 'lodash/uniqueId';
 
 const props = defineProps<{
   element: Element;
@@ -66,8 +68,10 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['save', 'link']);
 
-const expanded = ref<number[]>([]);
+const expanded = ref<string[]>([]);
 const elementData = reactive<ElementData>(cloneDeep(props.element.data));
+const panels = ref();
+const sortable = ref();
 
 const embedsByItem = computed(() => {
   return reduce(elementData.items, (acc, item) => {
@@ -78,24 +82,42 @@ const embedsByItem = computed(() => {
 
 const add = () => {
   const id = uuid();
-  elementData.items[id] = { id, title: 'Title', elementIds: [] };
+  elementData.items.push({ id, elementIds: [] });
+  expanded.value.push(id);
   emit('save', elementData);
 };
 
-const saveItem = ({ item, embeds = {} }: any) => {
-  Object.assign(elementData.items, { [item.id]: item });
+const saveItem = ({ item, embeds = {} }: any, index: number) => {
+  elementData.items[index] = item;
   Object.assign(elementData.embeds, embeds);
   emit('save', elementData);
 };
 
 const deleteItem = (id: string, index: number) => {
-  elementData.items[id].elementIds.forEach((embedId) => {
-    delete elementData.embeds[embedId];
-  });
-  delete elementData.items[id];
-  if (expanded.value.includes(index)) pull(expanded.value, index);
+  const { elementIds } = elementData.items[index];
+  elementIds.forEach((id) => delete elementData.embeds[id]);
+  elementData.items.splice(index, 1);
+  if (expanded.value.includes(id)) pull(expanded.value, id);
   emit('save', elementData);
 };
+
+onMounted(() => {
+  sortable.value = Sortable.create(panels.value.$el, {
+    animation: 150,
+    group: `dragDrop-${uniqueId()}`,
+    handle: '.accordion-drag-handle',
+    onEnd: ({ oldIndex, newIndex }) => {
+      if (!isNumber(newIndex) || !isNumber(oldIndex)) return;
+      const [item] = elementData.items.splice(oldIndex, 1);
+      elementData.items.splice(newIndex, 0, item);
+      emit('save', elementData);
+    },
+  });
+});
+
+onBeforeUnmount(() => {
+  sortable.value.destroy();
+});
 </script>
 
 <style lang="scss" scoped>
