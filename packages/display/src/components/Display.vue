@@ -17,21 +17,23 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { ElementData } from '@tailor-cms/ce-accordion-manifest';
 import sortBy from 'lodash/sortBy';
-import { computed } from 'vue';
-import { filter } from 'lodash';
 
 const props = defineProps<{ data: ElementData; userState: any }>();
 defineEmits(['interaction']);
 
 const embeds = computed(() => {
   const { items, embeds } = props.data;
-  return items.reduce((acc, item) => {
-    const itemEmbeds = filter(embeds, (it) => item.elementIds.includes(it.id));
-    acc[item.id] = sortBy(itemEmbeds, 'position');
-    return acc;
-  }, {} as Record<string, any[]>);
+  return items.reduce(
+    (acc, item) => {
+      const itemEmbeds = item.elementIds.map((id) => embeds[id]);
+      acc[item.id] = sortBy(itemEmbeds, 'position');
+      return acc;
+    },
+    {} as Record<string, any[]>,
+  );
 });
 </script>
 

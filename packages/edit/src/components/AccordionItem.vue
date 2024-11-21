@@ -9,26 +9,29 @@
       >
         <VForm
           ref="form"
-          validate-on="submit"
           class="d-flex align-center w-100"
+          validate-on="submit"
           @submit.prevent="saveTitle"
         >
-          <span v-if="!isDisabled" class="accordion-drag-handle" @drag.stop.prevent>
+          <span
+            v-if="!isDisabled"
+            class="accordion-drag-handle"
+            @drag.stop.prevent
+          >
             <VIcon icon="mdi-drag-vertical" />
           </span>
           <VTextField
             v-if="isEditing"
             v-model="title"
-            @click.stop
-            @keyup.space.prevent
+            :rules="[(val: string) => !!val || 'Title is required']"
+            bg-color="white"
             class="w-100"
             density="compact"
             hide-details="auto"
-            variant="outlined"
             placeholder="Accordion item title..."
-            bg-color="white"
-            autofocus
-            :rules="[(val: string) => !!val || 'Title is required']"
+            variant="outlined"
+            @click.stop
+            @keyup.space.prevent
           />
           <div v-else class="accordion-title ml-4">{{ item.title }}</div>
           <VSpacer />
@@ -43,8 +46,8 @@
               />
               <VBtn
                 color="primary-darken-2"
-                type="submit"
                 text="Save"
+                type="submit"
                 variant="tonal"
                 @click.stop
               />
@@ -89,9 +92,9 @@
         </template>
       </VAlert>
       <EmbeddedContainer
-        :types="embedTypes"
         :container="{ embeds }"
         :is-disabled="isDisabled"
+        :types="embedTypes"
         @delete="deleteEmbed"
         @save="saveEmbed($event.embeds)"
       />
@@ -100,15 +103,15 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, inject } from 'vue';
-import pull from 'lodash/pull';
+import { computed, inject, ref } from 'vue';
 import cloneDeep from 'lodash/cloneDeep';
 import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
+import pull from 'lodash/pull';
 
 interface Props {
   item: any;
-  embedTypes?: string[] | undefined;
+  embedTypes: string[];
   embeds?: any;
   isFocused?: boolean;
   isDisabled?: boolean;
@@ -154,7 +157,7 @@ const deleteItem = () => {
   return eventBus.channel('app').emit('showConfirmationModal', {
     title: 'Delete accordion item',
     message: 'Are you sure you want to delete selected item?',
-    action: () =>  emit('delete'),
+    action: () => emit('delete'),
   });
 };
 
@@ -190,5 +193,5 @@ const deleteEmbed = (embed: { id: string }) => {
       color: #fff !important;
     }
   }
-  }
+}
 </style>

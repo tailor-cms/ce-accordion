@@ -3,30 +3,30 @@
     <VExpansionPanels
       ref="panels"
       v-model="expanded"
-      multiple
       elevation="0"
       rounded="lg"
+      multiple
     >
       <VExpandTransition v-if="elementData.items.length > 0" group>
         <AccordionItem
-          v-for="(element, index) in elementData.items"
-          :key="element.id"
-          :item="element"
-          :embeds="embedsByItem[element.id]"
-          :is-disabled="isDisabled"
-          :is-focused="isFocused"
-          :is-expanded="expanded.includes(element.id)"
+          v-for="(it, index) in elementData.items"
+          :key="it.id"
           :embed-types="embedTypes"
+          :embeds="embedsByItem[it.id]"
+          :is-disabled="isDisabled"
+          :is-expanded="expanded.includes(it.id)"
+          :is-focused="isFocused"
+          :item="element"
+          @delete="deleteItem(it.id, index)"
           @save="saveItem($event, index)"
-          @delete="deleteItem(element.id, index)"
         />
       </VExpandTransition>
     </VExpansionPanels>
     <VAlert
       v-if="elementData.items.length === 0"
-      icon="mdi-information-variant"
       class="w-100"
       color="primary-darken-2"
+      icon="mdi-information-variant"
       variant="tonal"
       prominent
     >
@@ -50,20 +50,21 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import cloneDeep from 'lodash/cloneDeep';
 import { Element, ElementData } from '@tailor-cms/ce-accordion-manifest';
-import AccordionItem from './AccordionItem.vue';
-import Sortable from "sortablejs";
-import pick from 'lodash/pick';
-import reduce from 'lodash/reduce';
-import pull from 'lodash/pull';
+import cloneDeep from 'lodash/cloneDeep';
 import isNumber from 'lodash/isNumber';
-import { v4 as uuid } from 'uuid';
+import pick from 'lodash/pick';
+import pull from 'lodash/pull';
+import reduce from 'lodash/reduce';
+import Sortable from 'sortablejs';
 import uniqueId from 'lodash/uniqueId';
+import { v4 as uuid } from 'uuid';
+
+import AccordionItem from './AccordionItem.vue';
 
 const props = defineProps<{
   element: Element;
-  embedTypes?: string[] | undefined;
+  embedTypes: string[];
   isFocused: boolean;
   isDisabled: boolean;
 }>();
@@ -75,10 +76,14 @@ const panels = ref();
 const sortable = ref();
 
 const embedsByItem = computed(() => {
-  return reduce(elementData.items, (acc, item) => {
-    acc[item.id] = pick(elementData.embeds, item.elementIds);
-    return acc;
-  }, {} as any);
+  return reduce(
+    elementData.items,
+    (acc, item) => {
+      acc[item.id] = pick(elementData.embeds, item.elementIds);
+      return acc;
+    },
+    {} as any,
+  );
 });
 
 const add = () => {
