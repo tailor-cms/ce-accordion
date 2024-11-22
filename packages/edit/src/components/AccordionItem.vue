@@ -39,16 +39,16 @@
             <template v-if="isEditing">
               <VBtn
                 color="primary-darken-2"
-                text="Cancel"
-                variant="text"
-                @click.stop="cancel"
-              />
-              <VBtn
-                color="primary-darken-2"
                 text="Save"
                 type="submit"
                 variant="tonal"
                 @click.stop
+              />
+              <VBtn
+                color="primary-darken-2"
+                text="Cancel"
+                variant="text"
+                @click.stop="cancel"
               />
             </template>
             <VFadeTransition v-else group>
