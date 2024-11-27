@@ -7,7 +7,7 @@
       rounded="lg"
       multiple
     >
-      <VExpandTransition v-if="elementData.items.length > 0" group>
+      <VExpandTransition v-if="!!elementData.items.length" group>
         <AccordionItem
           v-for="(item, index) in elementData.items"
           :key="item.id"
@@ -23,19 +23,15 @@
         />
       </VExpandTransition>
     </VExpansionPanels>
-    <VAlert
-      v-if="elementData.items.length === 0"
-      class="w-100"
-      color="primary-darken-2"
-      icon="mdi-information-variant"
-      variant="tonal"
-      prominent
-    >
-      <template v-if="isDisabled">No items added.</template>
-      <template v-else>
-        Click on the button below in order to create your first item.
-      </template>
-    </VAlert>
+    <ElementPlaceholder
+      v-if="!elementData.items.length"
+      :icon="manifest.ui.icon"
+      :is-disabled="isDisabled"
+      :is-focused="isFocused"
+      :name="`${manifest.name} component`"
+      active-icon="mdi-arrow-down"
+      active-placeholder="Click the button below to create the first item"
+    />
     <VBtn
       v-if="!isDisabled"
       class="mt-6"
@@ -44,14 +40,17 @@
       variant="text"
       @click="add"
     >
-      Accordion item
+      Add accordion item
     </VBtn>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import { Element, ElementData } from '@tailor-cms/ce-accordion-manifest';
+import manifest, {
+  Element,
+  ElementData,
+} from '@tailor-cms/ce-accordion-manifest';
 import cloneDeep from 'lodash/cloneDeep';
 import isNumber from 'lodash/isNumber';
 import pick from 'lodash/pick';
@@ -59,6 +58,7 @@ import pull from 'lodash/pull';
 import Sortable from 'sortablejs';
 import uniqueId from 'lodash/uniqueId';
 import { v4 as uuid } from 'uuid';
+import { ElementPlaceholder } from '@tailor-cms/core-components';
 
 import AccordionItem from './AccordionItem.vue';
 
