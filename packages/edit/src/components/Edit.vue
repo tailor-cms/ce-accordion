@@ -52,13 +52,13 @@ import manifest, {
   ElementData,
 } from '@tailor-cms/ce-accordion-manifest';
 import cloneDeep from 'lodash/cloneDeep';
+import { ElementPlaceholder } from '@tailor-cms/core-components';
 import isNumber from 'lodash/isNumber';
 import pick from 'lodash/pick';
 import pull from 'lodash/pull';
 import Sortable from 'sortablejs';
 import uniqueId from 'lodash/uniqueId';
 import { v4 as uuid } from 'uuid';
-import { ElementPlaceholder } from '@tailor-cms/core-components';
 
 import AccordionItem from './AccordionItem.vue';
 
