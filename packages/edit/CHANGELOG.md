@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-edit
 
+## 0.0.4
+
+### Patch Changes
+
+- Prefixed EmbeddedContainer, replaced uuid with cuid.
+
 ## 0.0.3
 
 ### Patch Changes
