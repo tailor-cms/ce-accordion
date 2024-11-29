@@ -90,7 +90,7 @@
           Click the button below to add content element.
         </template>
       </VAlert>
-      <EmbeddedContainer
+      <TailorEmbeddedContainer
         :container="{ embeds }"
         :is-disabled="isDisabled"
         :types="embedTypes"

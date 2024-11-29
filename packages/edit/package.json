@@ -34,11 +34,10 @@
     "vue-tsc": "^1.8.5"
   },
   "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
     "@tailor-cms/core-components": "^1.0.14",
-    "@types/uuid": "^10.0.0",
     "lodash": "^4.17.21",
-    "sortablejs": "^1.15.3",
-    "uuid": "^11.0.3"
+    "sortablejs": "^1.15.3"
   },
   "publishConfig": {
     "access": "public"

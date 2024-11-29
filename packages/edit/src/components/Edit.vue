@@ -52,13 +52,13 @@ import manifest, {
   ElementData,
 } from '@tailor-cms/ce-accordion-manifest';
 import cloneDeep from 'lodash/cloneDeep';
+import { createId as cuid } from '@paralleldrive/cuid2';
 import { ElementPlaceholder } from '@tailor-cms/core-components';
 import isNumber from 'lodash/isNumber';
 import pick from 'lodash/pick';
 import pull from 'lodash/pull';
 import Sortable from 'sortablejs';
 import uniqueId from 'lodash/uniqueId';
-import { v4 as uuid } from 'uuid';
 
 import AccordionItem from './AccordionItem.vue';
 
@@ -83,7 +83,7 @@ const embedsByItem = computed(() =>
 );
 
 const add = () => {
-  const id = uuid();
+  const id = cuid();
   elementData.items.push({ id, elementIds: [] });
 };
 

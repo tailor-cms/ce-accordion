@@ -8,7 +8,7 @@
             <VAlert v-if="!embeds[item.id].length" type="info" variant="tonal">
               No content elements added to this item.
             </VAlert>
-            <EmbeddedContainer v-else :elements="embeds[item.id]" />
+            <TailorEmbeddedContainer v-else :elements="embeds[item.id]" />
           </VExpansionPanelText>
         </VExpansionPanel>
       </VExpandTransition>
