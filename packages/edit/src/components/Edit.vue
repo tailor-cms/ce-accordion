@@ -1,17 +1,11 @@
 <template>
   <div class="tce-accordion d-flex flex-column align-center text-center">
-    <VExpansionPanels
-      ref="panels"
-      v-model="expanded"
-      elevation="0"
-      rounded="lg"
-      multiple
-    >
+    <VExpansionPanels ref="panels" v-model="expanded" rounded="lg" multiple>
       <VExpandTransition v-if="!!elementData.items.length" group>
         <AccordionItem
           v-for="(item, index) in elementData.items"
           :key="item.id"
-          :embed-types="embedTypes"
+          :allowed-embed-types="allowedEmbedTypes"
           :embeds="embedsByItem[item.id]"
           :is-disabled="isDisabled"
           :is-expanded="expanded.includes(item.id)"
@@ -64,7 +58,7 @@ import AccordionItem from './AccordionItem.vue';
 
 const props = defineProps<{
   element: Element;
-  embedTypes: string[];
+  allowedEmbedTypes: string[];
   isFocused: boolean;
   isDisabled: boolean;
 }>();
@@ -84,7 +78,9 @@ const embedsByItem = computed(() =>
 
 const add = () => {
   const id = cuid();
-  elementData.items.push({ id, elementIds: [] });
+  elementData.items.push({ id, title: 'Title', elementIds: [] });
+  expanded.value.push(id);
+  emit('save', elementData);
 };
 
 const saveItem = ({ item, embeds = {} }: any, index: number) => {
@@ -124,12 +120,5 @@ onBeforeUnmount(() => {
 .tce-accordion {
   text-align: left;
   margin: 1rem 0;
-
-  :deep(.v-expansion-panel-text) {
-    border-bottom-right-radius: inherit;
-    border-bottom-left-radius: inherit;
-    border: 2px solid rgb(var(--v-theme-primary-lighten-5));
-    border-top: none !important;
-  }
 }
 </style>

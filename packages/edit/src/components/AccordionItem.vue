@@ -1,11 +1,11 @@
 <template>
-  <VExpansionPanel :hide-actions="isNew" :readonly="isNew" :value="item.id">
+  <VExpansionPanel :value="item.id">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VExpansionPanelTitle
         v-bind="hoverProps"
         class="pa-2 pr-4"
         color="primary-lighten-5"
-        min-height="56"
+        min-height="64"
       >
         <VForm
           ref="form"
@@ -93,7 +93,7 @@
       <TailorEmbeddedContainer
         :container="{ embeds }"
         :is-disabled="isDisabled"
-        :types="embedTypes"
+        :types="allowedEmbedTypes"
         @delete="deleteEmbed"
         @save="saveEmbed($event.embeds)"
       />
@@ -110,7 +110,7 @@ import pull from 'lodash/pull';
 
 interface Props {
   item: any;
-  embedTypes: string[];
+  allowedEmbedTypes: string[];
   embeds?: any;
   isFocused?: boolean;
   isDisabled?: boolean;
@@ -123,7 +123,7 @@ const props = withDefaults(defineProps<Props>(), {
   isFocused: false,
   isExpanded: false,
 });
-const emit = defineEmits(['save', 'expand', 'delete']);
+const emit = defineEmits(['save', 'delete']);
 
 const eventBus = inject('$eventBus') as any;
 
@@ -131,11 +131,9 @@ const isEditing = ref(!props.item.title);
 const form = ref<HTMLFormElement>();
 const title = ref(props.item.title);
 
-const isNew = computed(() => !props.item.title);
 const hasElements = computed(() => !isEmpty(props.embeds));
 
 const cancel = () => {
-  if (isNew.value) return emit('delete');
   title.value = props.item.title;
   isEditing.value = false;
 };
@@ -146,7 +144,6 @@ const saveTitle = async () => {
   isEditing.value = false;
   const item = { ...props.item, title: title.value };
   emit('save', { item, embeds: props.embeds });
-  if (isNew.value) emit('expand');
 };
 
 const saveEmbed = (embeds: any) => {
