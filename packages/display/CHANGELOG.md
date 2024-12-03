@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-display
 
+## 0.0.5
+
+### Patch Changes
+
+- Refactored basic flow, remove remporary additions and instead add default title.
+
 ## 0.0.4
 
 ### Patch Changes
