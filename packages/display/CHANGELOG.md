@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-display
 
+## 0.0.6
+
+### Patch Changes
+
+- Tweaked component styling.
+
 ## 0.0.5
 
 ### Patch Changes
