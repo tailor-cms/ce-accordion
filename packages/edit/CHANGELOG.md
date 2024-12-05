@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-edit
 
+## 0.0.7
+
+### Patch Changes
+
+- Bumped Edit runtime package.
+
 ## 0.0.6
 
 ### Patch Changes
