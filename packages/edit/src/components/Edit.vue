@@ -23,24 +23,21 @@
       :is-disabled="isDisabled"
       :is-focused="isFocused"
       :name="`${manifest.name} component`"
-      active-icon="mdi-arrow-down"
-      active-placeholder="Click the button below to create the first item"
+      active-icon="mdi-arrow-up"
+      active-placeholder="Use toolbar to create the first item"
     />
-    <VBtn
-      v-if="!isDisabled"
-      class="mt-6"
-      color="primary-darken-4"
-      prepend-icon="mdi-plus"
-      variant="text"
-      @click="add"
-    >
-      Add accordion item
-    </VBtn>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import {
+  computed,
+  inject,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+} from 'vue';
 import manifest, {
   Element,
   ElementData,
@@ -64,6 +61,8 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['save', 'link']);
 
+const elementBus: any = inject('$elementBus');
+
 const expanded = ref<string[]>([]);
 const elementData = reactive<ElementData>(cloneDeep(props.element.data));
 const panels = ref();
@@ -75,13 +74,6 @@ const embedsByItem = computed(() =>
     return acc;
   }, {} as any),
 );
-
-const add = () => {
-  const id = cuid();
-  elementData.items.push({ id, title: 'Title', elementIds: [] });
-  expanded.value.push(id);
-  emit('save', elementData);
-};
 
 const saveItem = ({ item, embeds = {} }: any, index: number) => {
   elementData.items[index] = item;
@@ -109,6 +101,13 @@ onMounted(() => {
       emit('save', elementData);
     },
   });
+});
+
+elementBus.on('add', () => {
+  const id = cuid();
+  elementData.items.push({ id, title: 'Title', elementIds: [] });
+  expanded.value.push(id);
+  emit('save', elementData);
 });
 
 onBeforeUnmount(() => {
