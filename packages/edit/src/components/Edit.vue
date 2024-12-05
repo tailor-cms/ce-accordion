@@ -1,6 +1,12 @@
 <template>
   <div class="tce-accordion d-flex flex-column align-center text-center">
-    <VExpansionPanels ref="panels" v-model="expanded" rounded="lg" multiple>
+    <VExpansionPanels
+      ref="panels"
+      v-model="expanded"
+      elevation="0"
+      rounded="lg"
+      multiple
+    >
       <VExpandTransition v-if="!!elementData.items.length" group>
         <AccordionItem
           v-for="(item, index) in elementData.items"
@@ -119,5 +125,12 @@ onBeforeUnmount(() => {
 .tce-accordion {
   text-align: left;
   margin: 1rem 0;
+
+  :deep(.v-expansion-panel-text) {
+    border-bottom-right-radius: inherit;
+    border-bottom-left-radius: inherit;
+    border: 2px solid rgb(var(--v-theme-primary-lighten-5));
+    border-top: none !important;
+  }
 }
 </style>
