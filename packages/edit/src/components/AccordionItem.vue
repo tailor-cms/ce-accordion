@@ -56,19 +56,23 @@
                 <VBtn
                   v-tooltip:bottom="{ text: 'Edit title', openDelay: 300 }"
                   color="primary-darken-2"
-                  density="comfortable"
-                  icon="mdi-square-edit-outline"
+                  size="x-small"
                   variant="tonal"
+                  icon
                   @click.stop="isEditing = true"
-                />
+                >
+                  <VIcon icon="mdi-square-edit-outline" size="large" />
+                </VBtn>
                 <VBtn
                   v-tooltip:bottom="{ text: 'Delete item', openDelay: 300 }"
-                  color="secondary-lighten-2"
-                  density="comfortable"
-                  icon="mdi-delete-outline"
+                  color="secondary-lighten-1"
+                  size="x-small"
                   variant="tonal"
+                  icon
                   @click.stop="deleteItem"
-                />
+                >
+                  <VIcon icon="mdi-delete-outline" size="large" />
+                </VBtn>
               </template>
             </VFadeTransition>
           </div>
