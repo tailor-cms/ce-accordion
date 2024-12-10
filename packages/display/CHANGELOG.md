@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-display
 
+## 0.0.8
+
+### Patch Changes
+
+- Updated btn icon sizes.
+
 ## 0.0.7
 
 ### Patch Changes
