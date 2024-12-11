@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-display
 
+## 0.0.9
+
+### Patch Changes
+
+- Pinned playwright version in github actions.
+
 ## 0.0.8
 
 ### Patch Changes
