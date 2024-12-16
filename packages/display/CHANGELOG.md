@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-display
 
+## 0.0.10
+
+### Patch Changes
+
+- Bumped tce-boot and display runtime, tweaked styles.
+
 ## 0.0.9
 
 ### Patch Changes
