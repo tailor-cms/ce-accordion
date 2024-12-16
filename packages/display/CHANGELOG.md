@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-display
 
+## 0.0.11
+
+### Patch Changes
+
+- Fixed embedTypes prop name.
+
 ## 0.0.10
 
 ### Patch Changes
