@@ -3,6 +3,7 @@
     <VExpansionPanels
       ref="panels"
       v-model="expanded"
+      rounded="lg"
       variant="accordion"
       multiple
     >
@@ -10,7 +11,7 @@
         <AccordionItem
           v-for="(item, index) in elementData.items"
           :key="item.id"
-          :allowed-embed-types="allowedEmbedTypes"
+          :embed-types="embedTypes"
           :embeds="embedsByItem[item.id]"
           :is-disabled="isDisabled"
           :is-expanded="expanded.includes(item.id)"
@@ -60,7 +61,7 @@ import AccordionItem from './AccordionItem.vue';
 
 const props = defineProps<{
   element: Element;
-  allowedEmbedTypes: string[];
+  embedTypes: any[];
   isFocused: boolean;
   isDisabled: boolean;
 }>();

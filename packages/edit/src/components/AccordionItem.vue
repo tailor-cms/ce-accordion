@@ -97,7 +97,7 @@
       <TailorEmbeddedContainer
         :container="{ embeds }"
         :is-disabled="isDisabled"
-        :types="allowedEmbedTypes"
+        :types="embedTypes"
         @delete="deleteEmbed"
         @save="saveEmbed($event.embeds)"
       />
@@ -114,7 +114,7 @@ import pull from 'lodash/pull';
 
 interface Props {
   item: any;
-  allowedEmbedTypes: string[];
+  embedTypes: any[];
   embeds?: any;
   isFocused?: boolean;
   isDisabled?: boolean;
