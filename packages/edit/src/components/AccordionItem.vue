@@ -1,5 +1,5 @@
 <template>
-  <VExpansionPanel :value="item.id">
+  <VExpansionPanel :value="item.id" bg-color="grey-lighten-5">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VExpansionPanelTitle
         v-bind="hoverProps"
