@@ -1,33 +1,44 @@
 <template>
   <div class="tce-root">
-    <p>This is the Display version of the content element id: {{ id }}</p>
-    <div class="mt-6 mb-2">
-      Counter:
-      <span class="font-weight-bold">{{ data.count }}</span>
-    </div>
-    <v-btn class="my-6" @click="submit">Update user state</v-btn>
-    <div>
-      <div class="mb-1 text-subtitle-2">User state:</div>
-      <pre class="text-body-2">{{ userState }}</pre>
-    </div>
+    <VExpansionPanels>
+      <VExpandTransition group>
+        <VExpansionPanel v-for="item in data.items" :key="item.id">
+          <VExpansionPanelTitle>{{ item.title }}</VExpansionPanelTitle>
+          <VExpansionPanelText>
+            <VAlert v-if="!embeds[item.id].length" type="info" variant="tonal">
+              No content elements added to this item.
+            </VAlert>
+            <TailorEmbeddedContainer v-else :elements="embeds[item.id]" />
+          </VExpansionPanelText>
+        </VExpansionPanel>
+      </VExpandTransition>
+    </VExpansionPanels>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { ElementData } from '@tailor-cms/ce-accordion-manifest';
+import sortBy from 'lodash/sortBy';
 
-const props = defineProps<{ id: number; data: ElementData; userState: any }>();
-const emit = defineEmits(['interaction']);
+const props = defineProps<{ data: ElementData; userState: any }>();
+defineEmits(['interaction']);
 
-const submit = () => emit('interaction', { id: props.id });
+const embeds = computed(() => {
+  const { items, embeds } = props.data;
+  return items.reduce(
+    (acc, item) => {
+      const itemEmbeds = item.elementIds.map((id) => embeds[id]);
+      acc[item.id] = sortBy(itemEmbeds, 'position');
+      return acc;
+    },
+    {} as Record<string, any[]>,
+  );
+});
 </script>
 
 <style scoped>
 .tce-root {
-  background-color: transparent;
-  margin-top: 1rem;
-  padding: 1.25rem;
-  border: 2px dashed #888;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 1rem;
 }

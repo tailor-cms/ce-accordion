@@ -1,7 +1,12 @@
-// Example counter component
+interface AccordionItem {
+  id: string;
+  title?: string;
+  elementIds: string[];
+}
+
 export interface ElementData {
   embeds: Record<string, any>;
-  items: Record<string, any>;
+  items: AccordionItem[];
 }
 
 export interface Element {
@@ -30,6 +35,7 @@ export interface ElementManifest {
   version: string;
   name: string;
   ssr: boolean;
+  isComposite: boolean;
   initState: DataInitializer;
   Edit?: object;
   TopToolbar?: object;

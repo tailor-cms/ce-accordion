@@ -1,42 +1,129 @@
 <template>
-  <div class="tce-container">
-    <div>This is Edit version of the content element id: {{ element?.id }}</div>
-    <div class="mt-6 mb-2">
-      Counter:
-      <span class="font-weight-bold">{{ element.data.count }}</span>
-    </div>
-    <button @click="increment">Increment</button>
+  <div class="tce-accordion d-flex flex-column align-center text-center">
+    <VExpansionPanels
+      ref="panels"
+      v-model="expanded"
+      rounded="lg"
+      variant="accordion"
+      multiple
+    >
+      <VExpandTransition v-if="!!elementData.items.length" group>
+        <AccordionItem
+          v-for="(item, index) in elementData.items"
+          :key="item.id"
+          :embed-types="embedTypes"
+          :embeds="embedsByItem[item.id]"
+          :is-disabled="isDisabled"
+          :is-expanded="expanded.includes(item.id)"
+          :is-focused="isFocused"
+          :item="item"
+          @delete="deleteItem(item.id, index)"
+          @expand="expanded.push(item.id)"
+          @save="saveItem($event, index)"
+        />
+      </VExpandTransition>
+    </VExpansionPanels>
+    <ElementPlaceholder
+      v-if="!elementData.items.length"
+      :icon="manifest.ui.icon"
+      :is-disabled="isDisabled"
+      :is-focused="isFocused"
+      :name="`${manifest.name} component`"
+      active-icon="mdi-arrow-up"
+      active-placeholder="Use toolbar to create the first item"
+    />
   </div>
 </template>
 
-<script lang="ts" setup>
-import { defineEmits, defineProps } from 'vue';
-import { Element } from '@tailor-cms/ce-accordion-manifest';
+<script setup lang="ts">
+import {
+  computed,
+  inject,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+} from 'vue';
+import manifest, {
+  Element,
+  ElementData,
+} from '@tailor-cms/ce-accordion-manifest';
+import cloneDeep from 'lodash/cloneDeep';
+import { createId as cuid } from '@paralleldrive/cuid2';
+import { ElementPlaceholder } from '@tailor-cms/core-components';
+import isNumber from 'lodash/isNumber';
+import pick from 'lodash/pick';
+import pull from 'lodash/pull';
+import Sortable from 'sortablejs';
+import uniqueId from 'lodash/uniqueId';
 
-const emit = defineEmits(['save']);
-const props = defineProps<{ element: Element; isFocused: boolean }>();
+import AccordionItem from './AccordionItem.vue';
 
-const increment = () => {
-  const { data } = props.element;
-  const count = data.count + 1;
-  emit('save', { ...data, count });
+const props = defineProps<{
+  element: Element;
+  embedTypes: any[];
+  isFocused: boolean;
+  isDisabled: boolean;
+}>();
+const emit = defineEmits(['save', 'link']);
+
+const elementBus: any = inject('$elementBus');
+
+const expanded = ref<string[]>([]);
+const elementData = reactive<ElementData>(cloneDeep(props.element.data));
+const panels = ref();
+const sortable = ref();
+
+const embedsByItem = computed(() =>
+  elementData.items.reduce((acc, item) => {
+    acc[item.id] = pick(elementData.embeds, item.elementIds);
+    return acc;
+  }, {} as any),
+);
+
+const saveItem = ({ item, embeds = {} }: any, index: number) => {
+  elementData.items[index] = item;
+  Object.assign(elementData.embeds, embeds);
+  emit('save', elementData);
 };
+
+const deleteItem = (id: string, index: number) => {
+  const { elementIds } = elementData.items[index];
+  elementIds.forEach((id) => delete elementData.embeds[id]);
+  elementData.items.splice(index, 1);
+  if (expanded.value.includes(id)) pull(expanded.value, id);
+  emit('save', elementData);
+};
+
+onMounted(() => {
+  sortable.value = Sortable.create(panels.value.$el, {
+    animation: 150,
+    group: `dragDrop-${uniqueId()}`,
+    handle: '.accordion-drag-handle',
+    onEnd: ({ oldIndex, newIndex }) => {
+      if (!isNumber(newIndex) || !isNumber(oldIndex)) return;
+      const [item] = elementData.items.splice(oldIndex, 1);
+      elementData.items.splice(newIndex, 0, item);
+      emit('save', elementData);
+    },
+  });
+});
+
+elementBus.on('add', () => {
+  const id = cuid();
+  elementData.items.push({ id, title: 'Title', elementIds: [] });
+  expanded.value.push(id);
+  emit('save', elementData);
+});
+
+onBeforeUnmount(() => {
+  sortable.value.destroy();
+});
 </script>
 
-<style scoped>
-.tce-container {
-  background-color: transparent;
-  margin-top: 1rem;
-  padding: 1.5rem;
-  border: 2px dashed #888;
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 1rem;
-}
-
-button {
-  margin: 1rem 0 0 0;
-  padding: 0.25rem 1rem;
-  background-color: #eee;
-  border: 1px solid #444;
+<style lang="scss" scoped>
+.tce-accordion {
+  text-align: left;
+  margin: 1rem 0;
 }
 </style>
