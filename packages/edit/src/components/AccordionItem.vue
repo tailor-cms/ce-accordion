@@ -98,9 +98,9 @@
         </template>
       </VAlert>
       <TailorEmbeddedContainer
+        :allowed-element-config="embedElementConfig"
         :container="{ embeds }"
         :is-disabled="isDisabled"
-        :types="embedTypes"
         @delete="deleteEmbed"
         @save="saveEmbed($event.embeds)"
       />
