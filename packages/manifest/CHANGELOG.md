@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-manifest
 
+## 0.0.12
+
+### Patch Changes
+
+- Refactored package to use root card container and to always have at least one accordion item.
+
 ## 0.0.11
 
 ### Patch Changes
