@@ -1,3 +1,5 @@
+import { v4 as uuid } from 'uuid';
+
 import type {
   DataInitializer,
   ElementData,
@@ -14,7 +16,7 @@ export const name = 'Accordion';
 // entity)
 export const initState: DataInitializer = (): ElementData => ({
   embeds: {},
-  items: [],
+  items: [{ id: uuid(), title: 'Accordion Item Title', elementIds: [] }],
 });
 
 // Can be loaded from package.json
@@ -23,7 +25,7 @@ export const version = '1.0';
 // UI configuration for Tailor CMS
 const ui = {
   // Display icon, https://pictogrammers.com/library/mdi/
-  icon: 'mdi-view-list',
+  icon: 'mdi-view-day',
   // Does element support only full width or can be used within layouts
   // (e.g. 50/50 layout)
   forceFullWidth: true,

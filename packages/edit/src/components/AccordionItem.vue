@@ -1,5 +1,5 @@
 <template>
-  <VExpansionPanel :value="item.id" bg-color="grey-lighten-5">
+  <VExpansionPanel :value="item.id">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VExpansionPanelTitle
         v-bind="hoverProps"
@@ -38,6 +38,7 @@
           <div v-if="!isDisabled" class="d-flex mx-2 ga-1">
             <template v-if="isEditing">
               <VBtn
+                :disabled="title === props.item.title"
                 color="primary-darken-2"
                 text="Save"
                 type="submit"
@@ -45,6 +46,7 @@
                 @click.stop
               />
               <VBtn
+                :disabled="!props.item.title"
                 color="primary-darken-2"
                 text="Cancel"
                 variant="text"
@@ -64,6 +66,7 @@
                   <VIcon icon="mdi-square-edit-outline" size="large" />
                 </VBtn>
                 <VBtn
+                  v-if="allowDeletion"
                   v-tooltip:bottom="{ text: 'Delete item', openDelay: 300 }"
                   color="secondary-lighten-1"
                   size="x-small"
@@ -112,17 +115,26 @@ import isEmpty from 'lodash/isEmpty';
 import map from 'lodash/map';
 import pull from 'lodash/pull';
 
+interface Embed {
+  id: string;
+  data: Record<string, any>;
+  embedded: boolean;
+  position: number;
+  type: string;
+}
+
 interface Props {
-  item: any;
-  embedTypes: any[];
-  embeds?: any;
+  allowDeletion: boolean;
+  item: { id: string; title: string; elementIds: string[] };
+  embedElementConfig: any[];
+  embeds?: Record<string, Embed>;
   isFocused?: boolean;
   isDisabled?: boolean;
   isExpanded?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  embeds: () => {},
+  embeds: () => ({}),
   isDisabled: false,
   isFocused: false,
   isExpanded: false,
@@ -174,6 +186,10 @@ const deleteEmbed = (embed: { id: string }) => {
 </script>
 
 <style lang="scss" scoped>
+.v-expansion-panel {
+  border: thin solid rgba(0, 0, 0, 0.12);
+}
+
 .accordion-title {
   font-size: 1rem;
   font-weight: 500;
