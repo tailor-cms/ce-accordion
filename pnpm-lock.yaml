@@ -18,8 +18,8 @@ importers:
         specifier: 0.0.2
         version: 0.0.2(kwjg6bvyxkamsvavde6mxjk73q)
       '@tailor-cms/tce-boot':
-        specifier: 0.6.27
-        version: 0.6.27(@babel/parser@7.26.3)(@types/node@20.11.19)(rollup@4.12.0)
+        specifier: 0.6.28
+        version: 0.6.28(@babel/parser@7.26.3)(@types/node@20.11.19)(rollup@4.12.0)
       '@tailor-cms/tce-display-runtime':
         specifier: 0.6.7
         version: 0.6.7(@babel/parser@7.26.3)(@types/node@20.11.19)(rollup@4.12.0)
@@ -725,14 +725,14 @@ packages:
       eslint-plugin-vue: '>=9.17.0'
       eslint-plugin-vuejs-accessibility: '>=2.2.0'
 
-  '@tailor-cms/tce-boot@0.6.27':
-    resolution: {integrity: sha512-ZK/Pw3/1zMMO0T0CjtPePux+2WKB2Sh1FWQpilSR6wrS2yz+S6VMcl/JGy/o1n1DalQ5tZ3iX4qiTaAJcr1l1A==}
+  '@tailor-cms/tce-boot@0.6.28':
+    resolution: {integrity: sha512-VCVCpVQ7VYJLsyGIVw8EhPukz5J1lsWY1JZHiKZHSeh+5EUyo3ucQYJJ1JMIKGZscQvC1zNoVe6ULx6Xncl4pw==}
 
   '@tailor-cms/tce-display-runtime@0.6.7':
     resolution: {integrity: sha512-L9Z08YJ5NHZ3H04UhWph8lOMjPSikLBvP31CfY9JVwT/dAGc9soHdiItU1xnmkJQ7jLjnLsO1yb+ksu6JZ4A2g==}
 
-  '@tailor-cms/tce-edit-next-runtime@0.6.27':
-    resolution: {integrity: sha512-PWHf09KqDUUzsZxZkWzJKqx7NhHjeFKRo09EHPpoQqseuxxr4DqckUM2BB8h/vRVuzZwWG2JNb7FJBykWAihtw==}
+  '@tailor-cms/tce-edit-next-runtime@0.6.28':
+    resolution: {integrity: sha512-5tGkhBmK+O8smyCfOZwmeApXJGjDghodZ7ggF68EpygATElFsZzeVtY9WIegDJ+dBHvW6RzrZoyvhljpgXevzw==}
 
   '@tailor-cms/tce-edit-runtime@0.5.0':
     resolution: {integrity: sha512-/EOSELuBg+OOH5ItwCZrL2LlX9wSGyjPZexPC4lo2a/njbiorfuAjamy35mEYsG87Ets3kTf1aHrlK++g5sOsw==}
@@ -3640,13 +3640,11 @@ snapshots:
 
   '@babel/helper-string-parser@7.23.4': {}
 
-  '@babel/helper-string-parser@7.25.9':
-    optional: true
+  '@babel/helper-string-parser@7.25.9': {}
 
   '@babel/helper-validator-identifier@7.22.20': {}
 
-  '@babel/helper-validator-identifier@7.25.9':
-    optional: true
+  '@babel/helper-validator-identifier@7.25.9': {}
 
   '@babel/parser@7.23.9':
     dependencies:
@@ -3655,7 +3653,6 @@ snapshots:
   '@babel/parser@7.26.3':
     dependencies:
       '@babel/types': 7.26.3
-    optional: true
 
   '@babel/runtime@7.23.9':
     dependencies:
@@ -3671,7 +3668,6 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.25.9
       '@babel/helper-validator-identifier': 7.25.9
-    optional: true
 
   '@changesets/apply-release-plan@7.0.5':
     dependencies:
@@ -4148,10 +4144,10 @@ snapshots:
       eslint-plugin-vue: 9.21.1(eslint@8.56.0)
       eslint-plugin-vuejs-accessibility: 2.2.1(eslint@8.56.0)
 
-  '@tailor-cms/tce-boot@0.6.27(@babel/parser@7.26.3)(@types/node@20.11.19)(rollup@4.12.0)':
+  '@tailor-cms/tce-boot@0.6.28(@babel/parser@7.26.3)(@types/node@20.11.19)(rollup@4.12.0)':
     dependencies:
       '@tailor-cms/tce-display-runtime': 0.6.7(@babel/parser@7.26.3)(@types/node@20.11.19)(rollup@4.12.0)
-      '@tailor-cms/tce-edit-next-runtime': 0.6.27(@types/node@20.11.19)
+      '@tailor-cms/tce-edit-next-runtime': 0.6.28(@types/node@20.11.19)
       '@tailor-cms/tce-edit-runtime': 0.5.0(@babel/parser@7.26.3)(@types/node@20.11.19)(rollup@4.12.0)
       '@tailor-cms/tce-preview-runtime': 0.5.0(@types/node@20.11.19)
       '@tailor-cms/tce-server-runtime': 0.5.5(@types/node@20.11.19)
@@ -4224,7 +4220,7 @@ snapshots:
       - terser
       - webpack-plugin-vuetify
 
-  '@tailor-cms/tce-edit-next-runtime@0.6.27(@types/node@20.11.19)':
+  '@tailor-cms/tce-edit-next-runtime@0.6.28(@types/node@20.11.19)':
     dependencies:
       '@mdi/font': 7.4.47
       '@tailor-cms/cek-common': 0.0.3
@@ -4554,8 +4550,8 @@ snapshots:
 
   '@vue/compiler-sfc@2.7.14':
     dependencies:
-      '@babel/parser': 7.23.9
-      postcss: 8.4.35
+      '@babel/parser': 7.26.3
+      postcss: 8.4.49
       source-map: 0.6.1
 
   '@vue/compiler-sfc@3.3.4':
@@ -6556,7 +6552,6 @@ snapshots:
       nanoid: 3.3.7
       picocolors: 1.1.1
       source-map-js: 1.2.1
-    optional: true
 
   prebuild-install@7.1.1:
     dependencies:
@@ -6913,8 +6908,7 @@ snapshots:
 
   source-map-js@1.0.2: {}
 
-  source-map-js@1.2.1:
-    optional: true
+  source-map-js@1.2.1: {}
 
   source-map@0.6.1: {}
 
