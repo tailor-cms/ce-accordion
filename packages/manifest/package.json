@@ -3,7 +3,7 @@
   "description": "Tailor CMS accordion element",
   "author": "Studion <info@gostudion.com> (https://github.com/tailor-cms)",
   "type": "module",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -25,6 +25,9 @@
     "@tailor-cms/eslint-config": "0.0.2",
     "tsup": "^7.2.0",
     "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "uuid": "^11.0.5"
   },
   "tsup": {
     "entry": [

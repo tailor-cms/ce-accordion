@@ -1,6 +1,6 @@
 interface AccordionItem {
   id: string;
-  title?: string;
+  title: string;
   elementIds: string[];
 }
 
