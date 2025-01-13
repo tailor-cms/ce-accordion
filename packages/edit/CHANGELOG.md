@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-edit
 
+## 0.0.13
+
+### Patch Changes
+
+- Bumped tce-boot version.
+
 ## 0.0.12
 
 ### Patch Changes
