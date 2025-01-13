@@ -70,7 +70,7 @@ const props = defineProps<{
   isFocused: boolean;
   isDisabled: boolean;
 }>();
-const emit = defineEmits(['save', 'link']);
+const emit = defineEmits(['save']);
 
 const expanded = ref<string[]>([props.element.data.items[0].id]);
 const elementData = reactive<ElementData>(cloneDeep(props.element.data));
