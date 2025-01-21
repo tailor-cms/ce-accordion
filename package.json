@@ -5,20 +5,6 @@
   "version": "0.0.1",
   "type": "module",
   "private": true,
-  "exports": {
-    "./edit": {
-      "import": "./packages/edit/dist/index.js",
-      "require": "./packages/edit/dist/index.cjs"
-    },
-    "./display": {
-      "import": "./packages/display/dist/index.js",
-      "require": "./packages/display/dist/index.cjs"
-    },
-    "./server": {
-      "import": "./packages/server/dist/index.js",
-      "require": "./packages/server/dist/index.cjs"
-    }
-  },
   "scripts": {
     "dev": "concurrently 'pnpm boot:cek' 'pnpm boot:display' -n cek,display-runtime -c blue,cyan",
     "boot:cek": "cd ./node_modules/@tailor-cms/tce-boot && pnpm start",
@@ -32,7 +18,7 @@
     "@tailor-cms/tce-template": "bin/index.cjs"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.27.9",
+    "@changesets/cli": "^2.27.11",
     "@playwright/test": "1.49.1",
     "@tailor-cms/eslint-config": "0.0.2",
     "@tailor-cms/tce-boot": "0.6.29",
