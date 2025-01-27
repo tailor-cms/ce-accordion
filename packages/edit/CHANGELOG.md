@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-edit
 
+## 0.0.15
+
+### Patch Changes
+
+- Update data structure to follow old one so data migration is not needed.
+
 ## 0.0.14
 
 ### Patch Changes
