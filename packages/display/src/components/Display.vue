@@ -2,8 +2,8 @@
   <div class="tce-root">
     <VExpansionPanels>
       <VExpandTransition group>
-        <VExpansionPanel v-for="item in data.items" :key="item.id">
-          <VExpansionPanelTitle>{{ item.title }}</VExpansionPanelTitle>
+        <VExpansionPanel v-for="item in accordionItems" :key="item.id">
+          <VExpansionPanelTitle>{{ item.header }}</VExpansionPanelTitle>
           <VExpansionPanelText>
             <VAlert v-if="!embeds[item.id].length" type="info" variant="tonal">
               No content elements added to this item.
@@ -19,16 +19,20 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { ElementData } from '@tailor-cms/ce-accordion-manifest';
+import reduce from 'lodash/reduce';
 import sortBy from 'lodash/sortBy';
 
 const props = defineProps<{ data: ElementData; userState: any }>();
 defineEmits(['interaction']);
 
+const accordionItems = computed(() => sortBy(props.data.items, 'position'));
+
 const embeds = computed(() => {
   const { items, embeds } = props.data;
-  return items.reduce(
+  return reduce(
+    items,
     (acc, item) => {
-      const itemEmbeds = item.elementIds.map((id) => embeds[id]);
+      const itemEmbeds = Object.keys(item.body).map((id) => embeds[id]);
       acc[item.id] = sortBy(itemEmbeds, 'position');
       return acc;
     },

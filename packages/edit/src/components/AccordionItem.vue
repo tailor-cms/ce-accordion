@@ -11,7 +11,7 @@
           ref="form"
           class="d-flex align-center w-100"
           validate-on="submit"
-          @submit.prevent="saveTitle"
+          @submit.prevent="saveHeader"
         >
           <span
             v-if="!isDisabled"
@@ -22,7 +22,7 @@
           </span>
           <VTextField
             v-if="isEditing"
-            v-model="title"
+            v-model="header"
             :rules="[(val: string) => !!val || 'Title is required']"
             bg-color="white"
             class="w-100"
@@ -33,12 +33,12 @@
             @click.stop
             @keyup.space.prevent
           />
-          <div v-else class="accordion-title ml-4">{{ item.title }}</div>
+          <div v-else class="accordion-title ml-4">{{ item.header }}</div>
           <VSpacer />
           <div v-if="!isDisabled" class="d-flex mx-2 ga-1">
             <template v-if="isEditing">
               <VBtn
-                :disabled="title === props.item.title"
+                :disabled="header === props.item.header"
                 color="primary-darken-2"
                 text="Save"
                 type="submit"
@@ -46,7 +46,7 @@
                 @click.stop
               />
               <VBtn
-                :disabled="!props.item.title"
+                :disabled="!props.item.header"
                 color="primary-darken-2"
                 text="Cancel"
                 variant="text"
@@ -110,10 +110,10 @@
 
 <script lang="ts" setup>
 import { computed, inject, ref } from 'vue';
+import { AccordionItem } from '@tailor-cms/ce-accordion-manifest';
 import cloneDeep from 'lodash/cloneDeep';
+import forEach from 'lodash/forEach';
 import isEmpty from 'lodash/isEmpty';
-import map from 'lodash/map';
-import pull from 'lodash/pull';
 
 interface Embed {
   id: string;
@@ -125,7 +125,7 @@ interface Embed {
 
 interface Props {
   allowDeletion: boolean;
-  item: { id: string; title: string; elementIds: string[] };
+  item: AccordionItem;
   embedElementConfig: any[];
   embeds?: Record<string, Embed>;
   isFocused?: boolean;
@@ -143,28 +143,28 @@ const emit = defineEmits(['save', 'delete']);
 
 const eventBus = inject('$eventBus') as any;
 
-const isEditing = ref(!props.item.title);
+const isEditing = ref(!props.item.header);
 const form = ref<HTMLFormElement>();
-const title = ref(props.item.title);
+const header = ref(props.item.header);
 
 const hasElements = computed(() => !isEmpty(props.embeds));
 
 const cancel = () => {
-  title.value = props.item.title;
+  header.value = props.item.header;
   isEditing.value = false;
 };
 
-const saveTitle = async () => {
+const saveHeader = async () => {
   const { valid } = await form.value?.validate();
   if (!valid) return;
   isEditing.value = false;
-  const item = { ...props.item, title: title.value };
+  const item = { ...props.item, header: header.value };
   emit('save', { item, embeds: props.embeds });
 };
 
 const saveEmbed = (embeds: any) => {
   const item = cloneDeep(props.item);
-  item.elementIds = map(embeds, 'id');
+  forEach(embeds, (it) => (item.body[it.id] = true));
   emit('save', { item, embeds });
 };
 
@@ -180,7 +180,7 @@ const deleteEmbed = (embed: { id: string }) => {
   const embeds = cloneDeep(props.embeds);
   const item = cloneDeep(props.item);
   delete embeds[embed.id];
-  pull(item.elementIds, embed.id);
+  delete item.body[embed.id];
   emit('save', { item, embeds });
 };
 </script>
