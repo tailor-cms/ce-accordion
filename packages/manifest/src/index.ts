@@ -6,6 +6,8 @@ import type {
   ElementManifest,
 } from './interfaces';
 
+const id = uuid();
+
 // Element unique id within the target system (e.g. Tailor)
 export const type = 'ACCORDION';
 
@@ -16,7 +18,14 @@ export const name = 'Accordion';
 // entity)
 export const initState: DataInitializer = (): ElementData => ({
   embeds: {},
-  items: [{ id: uuid(), title: 'Accordion Item Title', elementIds: [] }],
+  items: {
+    [id]: {
+      id,
+      header: 'Accordion Item Title',
+      body: {},
+      position: 1,
+    },
+  },
 });
 
 // Can be loaded from package.json

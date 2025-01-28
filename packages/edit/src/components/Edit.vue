@@ -1,5 +1,5 @@
 <template>
-  <VCard class="tce-accordion my-2" color="grey-lighten-5">
+  <VCard class="tce-accordion" color="grey-lighten-5">
     <VToolbar class="px-4" color="primary-darken-2" height="36">
       <VIcon
         :icon="manifest.ui.icon"
@@ -17,20 +17,20 @@
         flat
         multiple
       >
-        <VExpandTransition v-if="!!itemCount" group>
+        <VExpandTransition v-if="!!accordionItemCount" group>
           <AccordionItem
-            v-for="(item, index) in elementData.items"
+            v-for="item in accordionItems"
             :key="item.id"
-            :allow-deletion="itemCount > 1"
+            :allow-deletion="accordionItemCount > 1"
             :embed-element-config="embedElementConfig"
             :embeds="embedsByItem[item.id]"
             :is-disabled="isDisabled"
             :is-expanded="expanded.includes(item.id)"
             :is-focused="isFocused"
             :item="item"
-            @delete="deleteItem(item.id, index)"
+            @delete="deleteItem(item.id)"
             @expand="expanded.push(item.id)"
-            @save="saveItem($event, index)"
+            @save="saveItem($event)"
           />
         </VExpandTransition>
       </VExpansionPanels>
@@ -40,7 +40,7 @@
         color="primary-darken-4"
         prepend-icon="mdi-tab-plus"
         variant="text"
-        @click="addItem"
+        @click="addAccordionItem"
       >
         Add Accordion Item
       </VBtn>
@@ -58,7 +58,9 @@ import cloneDeep from 'lodash/cloneDeep';
 import isNumber from 'lodash/isNumber';
 import pick from 'lodash/pick';
 import pull from 'lodash/pull';
+import reduce from 'lodash/reduce';
 import Sortable from 'sortablejs';
+import sortBy from 'lodash/sortBy';
 import uniqueId from 'lodash/uniqueId';
 import { v4 as uuid } from 'uuid';
 
@@ -72,31 +74,59 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(['save']);
 
-const expanded = ref<string[]>([props.element.data.items[0].id]);
+const expanded = ref<string[]>([]);
 const elementData = reactive<ElementData>(cloneDeep(props.element.data));
 const panels = ref();
 const sortable = ref();
 
-const itemCount = computed(() => elementData.items.length);
+const accordionItems = computed(() => sortBy(elementData.items, 'position'));
+const accordionItemCount = computed(() => accordionItems.value.length);
 const embedsByItem = computed(() =>
-  elementData.items.reduce((acc, item) => {
-    acc[item.id] = pick(elementData.embeds, item.elementIds);
-    return acc;
-  }, {} as any),
+  reduce(
+    elementData.items,
+    (acc, item) => {
+      acc[item.id] = pick(elementData.embeds, Object.keys(item.body));
+      return acc;
+    },
+    {} as any,
+  ),
 );
 
-const saveItem = ({ item, embeds = {} }: any, index: number) => {
-  elementData.items[index] = item;
+const saveItem = ({ item, embeds = {} }: any) => {
+  elementData.items[item.id] = item;
   Object.assign(elementData.embeds, embeds);
   emit('save', elementData);
 };
 
-const deleteItem = (id: string, index: number) => {
-  const { elementIds } = elementData.items[index];
-  elementIds.forEach((id) => delete elementData.embeds[id]);
-  elementData.items.splice(index, 1);
+const deleteItem = (id: string) => {
+  const { body } = elementData.items[id];
+  Object.keys(body).forEach((id) => delete elementData.embeds[id]);
+  delete elementData.items[id];
   if (expanded.value.includes(id)) pull(expanded.value, id);
   emit('save', elementData);
+};
+
+const addAccordionItem = () => {
+  const id = uuid();
+  elementData.items[id] = {
+    id,
+    header: `Accordion Item Title`,
+    body: {},
+    position: accordionItemCount.value + 1,
+  };
+  expanded.value.push(id);
+  emit('save', elementData);
+};
+
+const calculateNewPosition = (oldIndex: number, newIndex: number) => {
+  if (!newIndex) return accordionItems.value[newIndex].position / 2;
+  if (newIndex + 1 === accordionItemCount.value) {
+    return accordionItems.value[newIndex].position + 1;
+  }
+  const direction = oldIndex > newIndex ? -1 : 1;
+  const prevPos = accordionItems.value[newIndex].position;
+  const nextPos = accordionItems.value[newIndex + direction].position;
+  return (nextPos + prevPos) / 2;
 };
 
 onMounted(() => {
@@ -106,23 +136,13 @@ onMounted(() => {
     handle: '.accordion-drag-handle',
     onEnd: ({ oldIndex, newIndex }) => {
       if (!isNumber(newIndex) || !isNumber(oldIndex)) return;
-      const [item] = elementData.items.splice(oldIndex, 1);
-      elementData.items.splice(newIndex, 0, item);
+      const position = calculateNewPosition(oldIndex, newIndex);
+      const currentItem = accordionItems.value[oldIndex];
+      Object.assign(elementData.items[currentItem.id], { position });
       emit('save', elementData);
     },
   });
 });
-
-const addItem = () => {
-  const id = uuid();
-  elementData.items.push({
-    id,
-    title: `Accordion Item Title`,
-    elementIds: [],
-  });
-  expanded.value.push(id);
-  emit('save', elementData);
-};
 
 onBeforeUnmount(() => {
   sortable.value.destroy();
@@ -132,7 +152,6 @@ onBeforeUnmount(() => {
 <style lang="scss" scoped>
 .tce-accordion {
   text-align: left;
-  margin: 1rem 0;
 }
 
 :deep(.sortable-ghost) > * {

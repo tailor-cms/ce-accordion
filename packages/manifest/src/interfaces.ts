@@ -1,12 +1,13 @@
-interface AccordionItem {
+export interface AccordionItem {
   id: string;
-  title: string;
-  elementIds: string[];
+  header: string;
+  body: Record<string, any>;
+  position: number;
 }
 
 export interface ElementData {
   embeds: Record<string, any>;
-  items: AccordionItem[];
+  items: Record<string, AccordionItem>;
 }
 
 export interface Element {
