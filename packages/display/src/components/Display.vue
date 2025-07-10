@@ -17,18 +17,19 @@
 </template>
 
 <script setup lang="ts">
+import { reduce, sortBy } from 'lodash-es';
 import { computed } from 'vue';
-import { ElementData } from '@tailor-cms/ce-accordion-manifest';
-import reduce from 'lodash/reduce';
-import sortBy from 'lodash/sortBy';
+import { Element } from '@tailor-cms/ce-accordion-manifest';
 
-const props = defineProps<{ data: ElementData; userState: any }>();
+const props = defineProps<{ element: Element; userState: any }>();
 defineEmits(['interaction']);
 
-const accordionItems = computed(() => sortBy(props.data.items, 'position'));
+const accordionItems = computed(() =>
+  sortBy(props.element.data.items, 'position'),
+);
 
 const embeds = computed(() => {
-  const { items, embeds } = props.data;
+  const { items, embeds } = props.element.data;
   return reduce(
     items,
     (acc, item) => {
