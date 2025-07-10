@@ -1,5 +1,11 @@
 # @tailor-cms/ce-accordion-manifest
 
+## 0.0.16
+
+### Patch Changes
+
+- Bumped to the latest tce-boot and core-components version and migrated code accordingly.
+
 ## 0.0.15
 
 ### Patch Changes
