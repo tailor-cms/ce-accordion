@@ -46,3 +46,8 @@ const embeds = computed(() => {
   );
 });
 </script>
+
+<style lang="scss" scoped>
+.tce-accordion-root {
+}
+</style>
