@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-undef-components -->
 <template>
   <div class="tce-accordion-root">
     <VExpansionPanels color="grey-lighten-5" variant="accordion" flat>

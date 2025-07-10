@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-undef-components -->
 <template>
   <VExpansionPanel :value="item.id">
     <VHover v-slot="{ isHovering, props: hoverProps }">
@@ -154,7 +155,8 @@ const cancel = () => {
 };
 
 const saveHeader = async () => {
-  const { valid } = await form.value?.validate();
+  if (!form.value) return;
+  const { valid } = await form.value.validate();
   if (!valid) return;
   isEditing.value = false;
   const item = { ...props.item, header: header.value };
