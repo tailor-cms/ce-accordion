@@ -24,7 +24,7 @@
             :allow-deletion="accordionItemCount > 1"
             :embed-element-config="embedElementConfig"
             :embeds="embedsByItem[item.id]"
-            :is-disabled="isDisabled"
+            :is-disabled="isReadonly"
             :is-expanded="expanded.includes(item.id)"
             :is-focused="isFocused"
             :item="item"
@@ -35,7 +35,7 @@
         </VExpandTransition>
       </VExpansionPanels>
       <VBtn
-        v-if="!isDisabled"
+        v-if="!isReadonly"
         class="mt-6"
         color="primary-darken-4"
         prepend-icon="mdi-tab-plus"
@@ -69,8 +69,9 @@ import AccordionItem from './AccordionItem.vue';
 const props = defineProps<{
   element: Element;
   embedElementConfig: any[];
+  isDragged: boolean;
   isFocused: boolean;
-  isDisabled: boolean;
+  isReadonly: boolean;
 }>();
 const emit = defineEmits(['save']);
 
