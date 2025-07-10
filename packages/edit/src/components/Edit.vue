@@ -49,19 +49,21 @@
 </template>
 
 <script setup lang="ts">
+import {
+  cloneDeep,
+  isNumber,
+  pick,
+  pull,
+  reduce,
+  sortBy,
+  uniqueId,
+} from 'lodash-es';
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import manifest, {
   Element,
   ElementData,
 } from '@tailor-cms/ce-accordion-manifest';
-import cloneDeep from 'lodash/cloneDeep';
-import isNumber from 'lodash/isNumber';
-import pick from 'lodash/pick';
-import pull from 'lodash/pull';
-import reduce from 'lodash/reduce';
 import Sortable from 'sortablejs';
-import sortBy from 'lodash/sortBy';
-import uniqueId from 'lodash/uniqueId';
 import { v4 as uuid } from 'uuid';
 
 import AccordionItem from './AccordionItem.vue';

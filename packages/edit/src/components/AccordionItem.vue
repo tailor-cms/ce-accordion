@@ -110,11 +110,9 @@
 </template>
 
 <script lang="ts" setup>
+import { cloneDeep, forEach, isEmpty } from 'lodash-es';
 import { computed, inject, ref } from 'vue';
 import { AccordionItem } from '@tailor-cms/ce-accordion-manifest';
-import cloneDeep from 'lodash/cloneDeep';
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
 
 interface Embed {
   id: string;
