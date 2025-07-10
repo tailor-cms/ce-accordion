@@ -31,7 +31,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
-    "uuid": "^11.0.5"
+    "uuid": "^11.1.0"
   },
   "tsup": {
     "entry": [
