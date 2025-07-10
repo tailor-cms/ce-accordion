@@ -132,16 +132,16 @@ importers:
         specifier: workspace:*
         version: link:../manifest
       '@tailor-cms/cek-common':
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: ^1.3.2
+        version: 1.3.2
       '@tailor-cms/eslint-config':
-        specifier: 0.0.2
-        version: 0.0.2(08749fc0458fd6ba59e798fd0738999b)
+        specifier: 1.1.2
+        version: 1.1.2(@typescript-eslint/parser@8.36.0(eslint@9.30.1)(typescript@5.8.3))(@typescript-eslint/utils@8.36.0(eslint@9.30.1)(typescript@5.8.3))(eslint-import-resolver-node@0.3.9)(eslint@9.30.1)(prettier@3.6.2)(typescript@5.8.3)
       tsup:
-        specifier: ^8.3.6
+        specifier: ^8.5.0
         version: 8.5.0(postcss@8.5.6)(typescript@5.8.3)
       typescript:
-        specifier: ^5.7.3
+        specifier: ^5.8.3
         version: 5.8.3
 
 packages:
@@ -754,9 +754,6 @@ packages:
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: '>=8.40.0'
-
-  '@tailor-cms/cek-common@0.0.4':
-    resolution: {integrity: sha512-IBsWhMc8QVplCOQTFRejFPGPKYPUEifyNXMbJcVcDNZFVwJxEcWQ6jRoLgc8EHHjKPRM3tF9FHQWjCbE7CQuVA==}
 
   '@tailor-cms/cek-common@1.3.2':
     resolution: {integrity: sha512-MMP+kNh9dYeh/ok5Uq4mCSDYtw0JKIWsykaFcq7DSDl4XDnpbOItb+KMNW2VEMh0irWUvPitG82MkJZu0PmjYw==}
@@ -4682,8 +4679,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
       - typescript
-
-  '@tailor-cms/cek-common@0.0.4': {}
 
   '@tailor-cms/cek-common@1.3.2':
     dependencies:
