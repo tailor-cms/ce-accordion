@@ -1,8 +1,12 @@
 <template>
-  <div class="tce-root">
-    <VExpansionPanels>
+  <div class="tce-accordion-root">
+    <VExpansionPanels color="grey-lighten-5" variant="accordion" flat>
       <VExpandTransition group>
-        <VExpansionPanel v-for="item in accordionItems" :key="item.id">
+        <VExpansionPanel
+          v-for="item in accordionItems"
+          :key="item.id"
+          class="border"
+        >
           <VExpansionPanelTitle>{{ item.header }}</VExpansionPanelTitle>
           <VExpansionPanelText>
             <VAlert v-if="!embeds[item.id].length" type="info" variant="tonal">
@@ -41,10 +45,3 @@ const embeds = computed(() => {
   );
 });
 </script>
-
-<style scoped>
-.tce-root {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 1rem;
-}
-</style>
