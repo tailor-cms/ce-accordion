@@ -24,7 +24,7 @@
             :allow-deletion="accordionItemCount > 1"
             :embed-element-config="embedElementConfig"
             :embeds="embedsByItem[item.id]"
-            :is-disabled="isDisabled"
+            :is-disabled="isReadonly"
             :is-expanded="expanded.includes(item.id)"
             :is-focused="isFocused"
             :item="item"
@@ -35,7 +35,7 @@
         </VExpandTransition>
       </VExpansionPanels>
       <VBtn
-        v-if="!isDisabled"
+        v-if="!isReadonly"
         class="mt-6"
         color="primary-darken-4"
         prepend-icon="mdi-tab-plus"
@@ -49,19 +49,21 @@
 </template>
 
 <script setup lang="ts">
+import {
+  cloneDeep,
+  isNumber,
+  pick,
+  pull,
+  reduce,
+  sortBy,
+  uniqueId,
+} from 'lodash-es';
 import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import manifest, {
   Element,
   ElementData,
 } from '@tailor-cms/ce-accordion-manifest';
-import cloneDeep from 'lodash/cloneDeep';
-import isNumber from 'lodash/isNumber';
-import pick from 'lodash/pick';
-import pull from 'lodash/pull';
-import reduce from 'lodash/reduce';
 import Sortable from 'sortablejs';
-import sortBy from 'lodash/sortBy';
-import uniqueId from 'lodash/uniqueId';
 import { v4 as uuid } from 'uuid';
 
 import AccordionItem from './AccordionItem.vue';
@@ -69,8 +71,9 @@ import AccordionItem from './AccordionItem.vue';
 const props = defineProps<{
   element: Element;
   embedElementConfig: any[];
+  isDragged: boolean;
   isFocused: boolean;
-  isDisabled: boolean;
+  isReadonly: boolean;
 }>();
 const emit = defineEmits(['save']);
 

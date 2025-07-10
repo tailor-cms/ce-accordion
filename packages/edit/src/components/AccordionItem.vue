@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-undef-components -->
 <template>
   <VExpansionPanel :value="item.id">
     <VHover v-slot="{ isHovering, props: hoverProps }">
@@ -14,7 +15,7 @@
           @submit.prevent="saveHeader"
         >
           <span
-            v-if="!isDisabled"
+            v-if="!isReadonly"
             class="accordion-drag-handle"
             @drag.stop.prevent
           >
@@ -35,7 +36,7 @@
           />
           <div v-else class="accordion-title ml-4">{{ item.header }}</div>
           <VSpacer />
-          <div v-if="!isDisabled" class="d-flex mx-2 ga-1">
+          <div v-if="!isReadonly" class="d-flex mx-2 ga-1">
             <template v-if="isEditing">
               <VBtn
                 :disabled="header === props.item.header"
@@ -91,7 +92,7 @@
         variant="tonal"
         prominent
       >
-        <template v-if="isDisabled">
+        <template v-if="isReadonly">
           No content elements added to this item.
         </template>
         <template v-else>
@@ -101,7 +102,7 @@
       <TailorEmbeddedContainer
         :allowed-element-config="embedElementConfig"
         :container="{ embeds }"
-        :is-disabled="isDisabled"
+        :is-disabled="isReadonly"
         @delete="deleteEmbed"
         @save="saveEmbed($event.embeds)"
       />
@@ -110,11 +111,9 @@
 </template>
 
 <script lang="ts" setup>
+import { cloneDeep, forEach, isEmpty } from 'lodash-es';
 import { computed, inject, ref } from 'vue';
 import { AccordionItem } from '@tailor-cms/ce-accordion-manifest';
-import cloneDeep from 'lodash/cloneDeep';
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
 
 interface Embed {
   id: string;
@@ -130,13 +129,13 @@ interface Props {
   embedElementConfig: any[];
   embeds?: Record<string, Embed>;
   isFocused?: boolean;
-  isDisabled?: boolean;
+  isReadonly?: boolean;
   isExpanded?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   embeds: () => ({}),
-  isDisabled: false,
+  isReadonly: false,
   isFocused: false,
   isExpanded: false,
 });
@@ -156,7 +155,8 @@ const cancel = () => {
 };
 
 const saveHeader = async () => {
-  const { valid } = await form.value?.validate();
+  if (!form.value) return;
+  const { valid } = await form.value.validate();
   if (!valid) return;
   isEditing.value = false;
   const item = { ...props.item, header: header.value };

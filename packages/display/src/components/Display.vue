@@ -1,8 +1,13 @@
+<!-- eslint-disable vue/no-undef-components -->
 <template>
-  <div class="tce-root">
-    <VExpansionPanels>
+  <div class="tce-accordion-root">
+    <VExpansionPanels color="grey-lighten-5" variant="accordion" flat>
       <VExpandTransition group>
-        <VExpansionPanel v-for="item in accordionItems" :key="item.id">
+        <VExpansionPanel
+          v-for="item in accordionItems"
+          :key="item.id"
+          class="border"
+        >
           <VExpansionPanelTitle>{{ item.header }}</VExpansionPanelTitle>
           <VExpansionPanelText>
             <VAlert v-if="!embeds[item.id].length" type="info" variant="tonal">
@@ -17,18 +22,19 @@
 </template>
 
 <script setup lang="ts">
+import { reduce, sortBy } from 'lodash-es';
 import { computed } from 'vue';
-import { ElementData } from '@tailor-cms/ce-accordion-manifest';
-import reduce from 'lodash/reduce';
-import sortBy from 'lodash/sortBy';
+import { Element } from '@tailor-cms/ce-accordion-manifest';
 
-const props = defineProps<{ data: ElementData; userState: any }>();
+const props = defineProps<{ element: Element; userState: any }>();
 defineEmits(['interaction']);
 
-const accordionItems = computed(() => sortBy(props.data.items, 'position'));
+const accordionItems = computed(() =>
+  sortBy(props.element.data.items, 'position'),
+);
 
 const embeds = computed(() => {
-  const { items, embeds } = props.data;
+  const { items, embeds } = props.element.data;
   return reduce(
     items,
     (acc, item) => {
@@ -42,8 +48,6 @@ const embeds = computed(() => {
 </script>
 
 <style scoped>
-.tce-root {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 1rem;
+.tce-accordion-root {
 }
 </style>
