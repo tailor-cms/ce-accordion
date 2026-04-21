@@ -1,5 +1,11 @@
 import { ai, initState, type } from '@tailor-cms/ce-accordion-manifest';
-import type { HookServices, ServerRuntime } from '@tailor-cms/cek-common';
+import type {
+  BeforeDisplayHook,
+  ElementHook,
+  HookMap,
+  OnUserInteractionHook,
+  ServerModule,
+} from '@tailor-cms/cek-common';
 import type { Element } from '@tailor-cms/ce-accordion-manifest';
 
 // Detect if hooks are running in CEK (used for mocking end-system runtime)
@@ -7,39 +13,23 @@ const IS_CEK = process.env.CEK_RUNTIME;
 // Don't use in production, use only when IS_CEK=true
 const USER_STATE: any = {};
 
-export function beforeSave(element: Element, _services: HookServices) {
-  return element;
-}
+export const beforeSave: ElementHook<Element> = (element) => element;
 
-export function afterSave(element: Element, _services: HookServices) {
-  return element;
-}
+export const afterSave: ElementHook<Element> = (element) => element;
 
-export function afterLoaded(
-  element: Element,
-  _services: HookServices,
-  _runtime: ServerRuntime,
-) {
-  return element;
-}
+export const afterLoaded: ElementHook<Element> = (element) => element;
 
-export function afterRetrieve(
-  element: Element,
-  _services: HookServices,
-  _runtime: ServerRuntime,
-) {
-  return element;
-}
+export const afterRetrieve: ElementHook<Element> = (element) => element;
 
-export function beforeDisplay(_element: Element, context: any) {
+export const beforeDisplay: BeforeDisplayHook<Element> = (_element, context) => {
   return { ...context, ...USER_STATE };
-}
+};
 
-export function onUserInteraction(
-  _element: Element,
-  context: any,
-  payload: any,
-): any {
+export const onUserInteraction: OnUserInteractionHook<Element> = (
+  _element,
+  context,
+  payload,
+) => {
   // Simulate user state update within CEK
   if (IS_CEK) {
     // Only for showcase purposes
@@ -51,9 +41,9 @@ export function onUserInteraction(
   // Can have arbitrary return value (interpreted by target system)
   // FE is updated if updateDisplayState is true
   return { updateDisplayState: true };
-}
+};
 
-export const hookMap = new Map(
+export const hookMap: HookMap<Element> = new Map(
   Object.entries({
     beforeSave,
     afterSave,
@@ -64,10 +54,10 @@ export const hookMap = new Map(
   }),
 );
 
-export default {
+const serverModule: ServerModule<Element> = {
   type,
-  hookMap,
   initState,
+  hookMap,
   beforeSave,
   afterSave,
   afterLoaded,
@@ -76,5 +66,7 @@ export default {
   beforeDisplay,
   ai,
 };
+
+export default serverModule;
 
 export { type, initState, ai };

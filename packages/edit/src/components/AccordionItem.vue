@@ -139,7 +139,10 @@ const props = withDefaults(defineProps<Props>(), {
   isFocused: false,
   isExpanded: false,
 });
-const emit = defineEmits(['save', 'delete']);
+const emit = defineEmits<{
+  save: [payload: { item: AccordionItem; embeds: Record<string, Embed> }];
+  delete: [];
+}>();
 
 const eventBus = inject('$eventBus') as any;
 

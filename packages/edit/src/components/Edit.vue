@@ -7,7 +7,7 @@
         size="18"
         start
       />
-      <span class="text-subtitle-2">{{ manifest.name }}</span>
+      <span class="text-title-small">{{ manifest.name }}</span>
     </VToolbar>
     <div class="pa-6 text-center">
       <VExpansionPanels
@@ -75,7 +75,9 @@ const props = defineProps<{
   isFocused: boolean;
   isReadonly: boolean;
 }>();
-const emit = defineEmits(['save']);
+const emit = defineEmits<{
+  save: [data: ElementData];
+}>();
 
 const expanded = ref<string[]>([]);
 const elementData = reactive<ElementData>(cloneDeep(props.element.data));
