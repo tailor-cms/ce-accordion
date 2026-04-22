@@ -1,5 +1,5 @@
-import type { HookMap, ServerModule } from '@tailor-cms/cek-common';
 import { ai, initState, type } from '@tailor-cms/ce-accordion-manifest';
+import type { HookMap, ServerModule } from '@tailor-cms/cek-common';
 import type { Element } from '@tailor-cms/ce-accordion-manifest';
 
 export const hookMap: HookMap<Element> = new Map();
