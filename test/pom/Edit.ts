@@ -42,9 +42,7 @@ export class Edit extends pom.EditPanel {
   }
 
   addEmbedBtn(itemIndex: number): Locator {
-    return this.itemAt(itemIndex)
-      .locator('.embedded-container')
-      .getByRole('button');
+    return this.itemAt(itemIndex).getByRole('button', { name: 'Add content' });
   }
 
   saveTitleBtn(itemIndex: number): Locator {

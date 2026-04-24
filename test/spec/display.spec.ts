@@ -7,6 +7,7 @@ const ELEMENT_ID = 'test-accordion-display';
 
 test.beforeEach(async ({ page }) => {
   await elementClient.reset(ELEMENT_ID);
+  await elementClient.resetState(ELEMENT_ID);
   await page.goto(`/?id=${ELEMENT_ID}`);
   await page.waitForLoadState('networkidle');
 });
@@ -62,8 +63,4 @@ test.describe('Custom items', () => {
       display.panels.first().getByText('No content elements added'),
     ).toBeVisible();
   });
-});
-
-test.afterAll(async () => {
-  await elementClient.reset(ELEMENT_ID);
 });

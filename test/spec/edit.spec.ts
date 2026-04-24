@@ -60,7 +60,3 @@ test.describe('Readonly mode', () => {
     await expect(edit.addEmbedBtn(0)).not.toBeVisible();
   });
 });
-
-test.afterAll(async () => {
-  await elementClient.reset(ELEMENT_ID);
-});
