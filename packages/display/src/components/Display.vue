@@ -1,14 +1,14 @@
 <!-- eslint-disable vue/no-undef-components -->
 <template>
   <div class="tce-accordion-root">
-    <VExpansionPanels color="grey-lighten-5" variant="accordion" flat>
+    <VExpansionPanels flat static>
       <VExpandTransition group>
         <VExpansionPanel
           v-for="item in accordionItems"
           :key="item.id"
+          :title="item.header"
           class="border"
         >
-          <VExpansionPanelTitle>{{ item.header }}</VExpansionPanelTitle>
           <VExpansionPanelText>
             <VAlert v-if="!embeds[item.id].length" type="info" variant="tonal">
               No content elements added to this item.
@@ -27,7 +27,7 @@ import { computed } from 'vue';
 import { Element } from '@tailor-cms/ce-accordion-manifest';
 
 const props = defineProps<{ element: Element; userState: any }>();
-defineEmits(['interaction']);
+defineEmits<{ interaction: [data: any] }>();
 
 const accordionItems = computed(() =>
   sortBy(props.element.data.items, 'position'),

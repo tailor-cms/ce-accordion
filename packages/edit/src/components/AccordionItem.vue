@@ -58,6 +58,7 @@
               <template v-if="isHovering || isExpanded">
                 <VBtn
                   v-tooltip:bottom="{ text: 'Edit title', openDelay: 300 }"
+                  aria-label="Edit title"
                   color="primary-darken-2"
                   size="x-small"
                   variant="tonal"
@@ -69,6 +70,7 @@
                 <VBtn
                   v-if="allowDeletion"
                   v-tooltip:bottom="{ text: 'Delete item', openDelay: 300 }"
+                  aria-label="Delete item"
                   color="secondary-lighten-1"
                   size="x-small"
                   variant="tonal"
@@ -102,7 +104,7 @@
       <TailorEmbeddedContainer
         :allowed-element-config="embedElementConfig"
         :container="{ embeds }"
-        :is-disabled="isReadonly"
+        :is-readonly="isReadonly"
         @delete="deleteEmbed"
         @save="saveEmbed($event.embeds)"
       />
@@ -139,7 +141,10 @@ const props = withDefaults(defineProps<Props>(), {
   isFocused: false,
   isExpanded: false,
 });
-const emit = defineEmits(['save', 'delete']);
+const emit = defineEmits<{
+  save: [payload: { item: AccordionItem; embeds: Record<string, Embed> }];
+  delete: [];
+}>();
 
 const eventBus = inject('$eventBus') as any;
 

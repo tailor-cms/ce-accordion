@@ -7,7 +7,7 @@
         size="18"
         start
       />
-      <span class="text-subtitle-2">{{ manifest.name }}</span>
+      <span class="text-title-small">{{ manifest.name }}</span>
     </VToolbar>
     <div class="pa-6 text-center">
       <VExpansionPanels
@@ -24,9 +24,9 @@
             :allow-deletion="accordionItemCount > 1"
             :embed-element-config="embedElementConfig"
             :embeds="embedsByItem[item.id]"
-            :is-disabled="isReadonly"
             :is-expanded="expanded.includes(item.id)"
             :is-focused="isFocused"
+            :is-readonly="isReadonly"
             :item="item"
             @delete="deleteItem(item.id)"
             @expand="expanded.push(item.id)"
@@ -75,7 +75,9 @@ const props = defineProps<{
   isFocused: boolean;
   isReadonly: boolean;
 }>();
-const emit = defineEmits(['save']);
+const emit = defineEmits<{
+  save: [data: ElementData];
+}>();
 
 const expanded = ref<string[]>([]);
 const elementData = reactive<ElementData>(cloneDeep(props.element.data));
