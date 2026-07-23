@@ -46,18 +46,10 @@ import {
   pull,
   reduce,
   sortBy,
-  uniqueId,
 } from 'lodash-es';
-import {
-  computed,
-  onBeforeUnmount,
-  onMounted,
-  reactive,
-  ref,
-  watch,
-} from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { Element, ElementData } from '@tailor-cms/ce-accordion-manifest';
-import Sortable from 'sortablejs';
+import { useDraggable } from 'vue-draggable-plus';
 import { v4 as uuid } from 'uuid';
 
 import AccordionItem from './AccordionItem.vue';
@@ -76,7 +68,6 @@ const emit = defineEmits<{
 const expanded = ref<string[]>([]);
 const elementData = reactive<ElementData>(cloneDeep(props.element.data));
 const panels = ref();
-const sortable = ref();
 
 const accordionItems = computed(() => sortBy(elementData.items, 'position'));
 const accordionItemCount = computed(() => accordionItems.value.length);
@@ -89,15 +80,6 @@ const embedsByItem = computed(() =>
     },
     {} as any,
   ),
-);
-
-watch(
-  () => props.element.data,
-  (data) => {
-    if (isEqual(data, elementData)) return;
-    Object.assign(elementData, cloneDeep(data));
-    expanded.value = expanded.value.filter((id) => id in elementData.items);
-  },
 );
 
 const saveItem = ({ item, embeds = {} }: any) => {
@@ -137,24 +119,25 @@ const calculateNewPosition = (oldIndex: number, newIndex: number) => {
   return (nextPos + prevPos) / 2;
 };
 
-onMounted(() => {
-  sortable.value = Sortable.create(panels.value.$el, {
-    animation: 150,
-    group: `dragDrop-${uniqueId()}`,
-    handle: '.accordion-drag-handle',
-    onEnd: ({ oldIndex, newIndex }) => {
-      if (!isNumber(newIndex) || !isNumber(oldIndex)) return;
-      const position = calculateNewPosition(oldIndex, newIndex);
-      const currentItem = accordionItems.value[oldIndex];
-      Object.assign(elementData.items[currentItem.id], { position });
-      emit('save', elementData);
-    },
-  });
+useDraggable(panels, {
+  animation: 150,
+  handle: '.accordion-drag-handle',
+  onUpdate: ({ oldIndex, newIndex }) => {
+    if (!isNumber(newIndex) || !isNumber(oldIndex)) return;
+    const position = calculateNewPosition(oldIndex, newIndex);
+    const currentItem = accordionItems.value[oldIndex];
+    Object.assign(elementData.items[currentItem.id], { position });
+    emit('save', elementData);
+  },
 });
 
-onBeforeUnmount(() => {
-  sortable.value.destroy();
-});
+watch(
+  () => props.element.data,
+  (data) => {
+    if (isEqual(data, elementData)) return;
+    Object.assign(elementData, cloneDeep(data));
+  },
+);
 </script>
 
 <style lang="scss" scoped>
