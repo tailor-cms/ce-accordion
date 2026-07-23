@@ -39,13 +39,20 @@ test.describe('Item management', () => {
 
   test('Edits an item title', async ({ page }) => {
     const edit = new Edit(page);
-    await edit.itemAt(0).hover();
-    await edit.editBtn(0).click();
     await edit.titleInput(0).fill('My custom title');
-    await edit.saveTitleBtn(0).click();
-    await expect(edit.itemAt(0)).toContainText('My custom title');
+    await edit.titleInput(0).blur();
     await page.reload({ waitUntil: 'networkidle' });
-    await expect(edit.itemAt(0)).toContainText('My custom title');
+    await expect(edit.titleInput(0)).toHaveValue('My custom title');
+  });
+});
+
+test.describe('Reset', () => {
+  test('Clears authored items without a page reload', async ({ page }) => {
+    const edit = new Edit(page);
+    await edit.addItemBtn.click();
+    await expect(edit.panels).toHaveCount(3);
+    await edit.reset();
+    await expect(edit.panels).toHaveCount(2);
   });
 });
 

@@ -1,69 +1,55 @@
 <template>
-  <VCard class="tce-accordion" color="grey-lighten-5">
-    <VToolbar class="px-4" color="primary-darken-2" height="36">
-      <VIcon
-        :icon="manifest.ui.icon"
-        color="secondary-lighten-2"
-        size="18"
-        start
-      />
-      <span class="text-title-small">{{ manifest.name }}</span>
-    </VToolbar>
-    <div class="pa-6 text-center">
-      <VExpansionPanels
-        ref="panels"
-        v-model="expanded"
-        rounded="lg"
-        flat
-        multiple
-      >
-        <VExpandTransition v-if="!!accordionItemCount" group>
-          <AccordionItem
-            v-for="item in accordionItems"
-            :key="item.id"
-            :allow-deletion="accordionItemCount > 1"
-            :embed-element-config="embedElementConfig"
-            :embeds="embedsByItem[item.id]"
-            :is-expanded="expanded.includes(item.id)"
-            :is-focused="isFocused"
-            :is-readonly="isReadonly"
-            :item="item"
-            @delete="deleteItem(item.id)"
-            @expand="expanded.push(item.id)"
-            @save="saveItem($event)"
-          />
-        </VExpandTransition>
-      </VExpansionPanels>
-      <VBtn
-        v-if="!isReadonly"
-        class="mt-6"
-        color="primary-darken-4"
-        prepend-icon="mdi-tab-plus"
-        variant="text"
-        @click="addAccordionItem"
-      >
-        Add Accordion Item
-      </VBtn>
-    </div>
-  </VCard>
+  <div class="tce-accordion text-center">
+    <VExpansionPanels
+      ref="panels"
+      v-model="expanded"
+      rounded="lg"
+      flat
+      multiple
+    >
+      <VExpandTransition v-if="!!accordionItemCount" group>
+        <AccordionItem
+          v-for="item in accordionItems"
+          :key="item.id"
+          :allow-deletion="accordionItemCount > 1"
+          :embed-element-config="embedElementConfig"
+          :embeds="embedsByItem[item.id]"
+          :is-expanded="expanded.includes(item.id)"
+          :is-focused="isFocused"
+          :is-readonly="isReadonly"
+          :item="item"
+          class="text-left"
+          @delete="deleteItem(item.id)"
+          @expand="expanded.push(item.id)"
+          @save="saveItem($event)"
+        />
+      </VExpandTransition>
+    </VExpansionPanels>
+    <VBtn
+      v-if="!isReadonly"
+      class="mt-4"
+      prepend-icon="mdi-plus"
+      variant="text"
+      @click="addAccordionItem"
+    >
+      Add Accordion Item
+    </VBtn>
+  </div>
 </template>
 
 <script setup lang="ts">
 import {
   cloneDeep,
+  isEqual,
   isNumber,
   pick,
   pull,
   reduce,
   sortBy,
-  uniqueId,
 } from 'lodash-es';
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import manifest, {
-  Element,
-  ElementData,
-} from '@tailor-cms/ce-accordion-manifest';
-import Sortable from 'sortablejs';
+import { computed, reactive, ref, watch } from 'vue';
+import { Element, ElementData } from '@tailor-cms/ce-accordion-manifest';
+import { useDraggable } from 'vue-draggable-plus';
 import { v4 as uuid } from 'uuid';
 
 import AccordionItem from './AccordionItem.vue';
@@ -82,7 +68,6 @@ const emit = defineEmits<{
 const expanded = ref<string[]>([]);
 const elementData = reactive<ElementData>(cloneDeep(props.element.data));
 const panels = ref();
-const sortable = ref();
 
 const accordionItems = computed(() => sortBy(elementData.items, 'position'));
 const accordionItemCount = computed(() => accordionItems.value.length);
@@ -115,7 +100,7 @@ const addAccordionItem = () => {
   const id = uuid();
   elementData.items[id] = {
     id,
-    header: `Accordion Item Title`,
+    header: '',
     body: {},
     position: accordionItemCount.value + 1,
   };
@@ -134,31 +119,28 @@ const calculateNewPosition = (oldIndex: number, newIndex: number) => {
   return (nextPos + prevPos) / 2;
 };
 
-onMounted(() => {
-  sortable.value = Sortable.create(panels.value.$el, {
-    animation: 150,
-    group: `dragDrop-${uniqueId()}`,
-    handle: '.accordion-drag-handle',
-    onEnd: ({ oldIndex, newIndex }) => {
-      if (!isNumber(newIndex) || !isNumber(oldIndex)) return;
-      const position = calculateNewPosition(oldIndex, newIndex);
-      const currentItem = accordionItems.value[oldIndex];
-      Object.assign(elementData.items[currentItem.id], { position });
-      emit('save', elementData);
-    },
-  });
+useDraggable(panels, {
+  animation: 150,
+  handle: '.accordion-drag-handle',
+  onUpdate: ({ oldIndex, newIndex }) => {
+    if (!isNumber(newIndex) || !isNumber(oldIndex)) return;
+    const position = calculateNewPosition(oldIndex, newIndex);
+    const currentItem = accordionItems.value[oldIndex];
+    Object.assign(elementData.items[currentItem.id], { position });
+    emit('save', elementData);
+  },
 });
 
-onBeforeUnmount(() => {
-  sortable.value.destroy();
-});
+watch(
+  () => props.element.data,
+  (data) => {
+    if (isEqual(data, elementData)) return;
+    Object.assign(elementData, cloneDeep(data));
+  },
+);
 </script>
 
 <style lang="scss" scoped>
-.tce-accordion {
-  text-align: left;
-}
-
 :deep(.sortable-ghost) > * {
   visibility: hidden;
 }

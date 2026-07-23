@@ -5,15 +5,9 @@
       <VExpansionPanelTitle
         v-bind="hoverProps"
         class="pa-2 pr-4"
-        color="primary-lighten-5"
-        min-height="64"
+        min-height="56"
       >
-        <VForm
-          ref="form"
-          class="d-flex align-center w-100"
-          validate-on="submit"
-          @submit.prevent="saveHeader"
-        >
+        <div class="d-flex align-center w-100 ga-2">
           <span
             v-if="!isReadonly"
             class="accordion-drag-handle"
@@ -22,74 +16,41 @@
             <VIcon icon="mdi-drag-vertical" />
           </span>
           <VTextField
-            v-if="isEditing"
-            v-model="header"
-            :rules="[(val: string) => !!val || 'Title is required']"
-            bg-color="white"
-            class="w-100"
+            v-model="draft.header"
+            :readonly="isReadonly"
+            bg-color="transparent"
+            class="accordion-item-title"
             density="compact"
-            hide-details="auto"
-            placeholder="Accordion item title..."
-            variant="outlined"
+            placeholder="Accordion Title"
+            variant="plain"
+            flat
+            hide-details
+            @blur="save.flush()"
             @click.stop
             @keyup.space.prevent
+            @update:model-value="save"
           />
-          <div v-else class="accordion-title ml-4">{{ item.header }}</div>
-          <VSpacer />
-          <div v-if="!isReadonly" class="d-flex mx-2 ga-1">
-            <template v-if="isEditing">
-              <VBtn
-                :disabled="header === props.item.header"
-                color="primary-darken-2"
-                text="Save"
-                type="submit"
-                variant="tonal"
-                @click.stop
-              />
-              <VBtn
-                :disabled="!props.item.header"
-                color="primary-darken-2"
-                text="Cancel"
-                variant="text"
-                @click.stop="cancel"
-              />
-            </template>
-            <VFadeTransition v-else group>
-              <template v-if="isHovering || isExpanded">
-                <VBtn
-                  v-tooltip:bottom="{ text: 'Edit title', openDelay: 300 }"
-                  aria-label="Edit title"
-                  color="primary-darken-2"
-                  size="x-small"
-                  variant="tonal"
-                  icon
-                  @click.stop="isEditing = true"
-                >
-                  <VIcon icon="mdi-square-edit-outline" size="large" />
-                </VBtn>
-                <VBtn
-                  v-if="allowDeletion"
-                  v-tooltip:bottom="{ text: 'Delete item', openDelay: 300 }"
-                  aria-label="Delete item"
-                  color="secondary-lighten-1"
-                  size="x-small"
-                  variant="tonal"
-                  icon
-                  @click.stop="deleteItem"
-                >
-                  <VIcon icon="mdi-delete-outline" size="large" />
-                </VBtn>
-              </template>
-            </VFadeTransition>
-          </div>
-        </VForm>
+          <VFadeTransition>
+            <VBtn
+              v-if="(isHovering || isExpanded) && !isReadonly && allowDeletion"
+              v-tooltip:bottom="{ text: 'Delete item', openDelay: 300 }"
+              aria-label="Delete item"
+              class="mr-2"
+              color="error"
+              density="comfortable"
+              icon="mdi-trash-can-outline"
+              size="small"
+              variant="tonal"
+              @click.stop="deleteItem"
+            />
+          </VFadeTransition>
+        </div>
       </VExpansionPanelTitle>
     </VHover>
     <VExpansionPanelText class="text-center">
       <VAlert
         v-if="!hasElements"
         class="mx-6 mt-4 mb-2"
-        color="primary-darken-1"
         icon="mdi-information-outline"
         variant="tonal"
         prominent
@@ -113,9 +74,11 @@
 </template>
 
 <script lang="ts" setup>
-import { cloneDeep, forEach, isEmpty } from 'lodash-es';
-import { computed, inject, ref } from 'vue';
+import { cloneDeep, debounce, forEach, isEmpty } from 'lodash-es';
+import { computed, inject, reactive } from 'vue';
 import { AccordionItem } from '@tailor-cms/ce-accordion-manifest';
+
+const SAVE_DEBOUNCE = 3000;
 
 interface Embed {
   id: string;
@@ -142,35 +105,36 @@ const props = withDefaults(defineProps<Props>(), {
   isExpanded: false,
 });
 const emit = defineEmits<{
-  save: [payload: { item: AccordionItem; embeds: Record<string, Embed> }];
+  save: [payload: { item: AccordionItem; embeds?: Record<string, Embed> }];
   delete: [];
 }>();
 
 const eventBus = inject('$eventBus') as any;
 
-const isEditing = ref(!props.item.header);
-const form = ref<HTMLFormElement>();
-const header = ref(props.item.header);
+const draft = reactive({ header: props.item.header });
 
 const hasElements = computed(() => !isEmpty(props.embeds));
 
-const cancel = () => {
-  header.value = props.item.header;
-  isEditing.value = false;
-};
+const currentItem = (): AccordionItem => ({
+  ...cloneDeep(props.item),
+  ...draft,
+});
 
-const saveHeader = async () => {
-  if (!form.value) return;
-  const { valid } = await form.value.validate();
-  if (!valid) return;
-  isEditing.value = false;
-  const item = { ...props.item, header: header.value };
-  emit('save', { item, embeds: props.embeds });
-};
+const save = debounce(() => {
+  emit('save', { item: currentItem(), embeds: props.embeds });
+}, SAVE_DEBOUNCE);
 
-const saveEmbed = (embeds: any) => {
-  const item = cloneDeep(props.item);
+const saveEmbed = (embeds: Record<string, Embed>) => {
+  const item = currentItem();
   forEach(embeds, (it) => (item.body[it.id] = true));
+  emit('save', { item, embeds });
+};
+
+const deleteEmbed = (embed: { id: string }) => {
+  const item = currentItem();
+  const embeds = cloneDeep(props.embeds);
+  delete embeds[embed.id];
+  delete item.body[embed.id];
   emit('save', { item, embeds });
 };
 
@@ -181,14 +145,6 @@ const deleteItem = () => {
     action: () => emit('delete'),
   });
 };
-
-const deleteEmbed = (embed: { id: string }) => {
-  const embeds = cloneDeep(props.embeds);
-  const item = cloneDeep(props.item);
-  delete embeds[embed.id];
-  delete item.body[embed.id];
-  emit('save', { item, embeds });
-};
 </script>
 
 <style lang="scss" scoped>
@@ -196,27 +152,11 @@ const deleteEmbed = (embed: { id: string }) => {
   border: thin solid rgba(0, 0, 0, 0.12);
 }
 
-.accordion-title {
-  font-size: 1rem;
-  font-weight: 500;
-  letter-spacing: 0.009375em;
+.accordion-drag-handle {
+  cursor: pointer;
 }
 
-.v-input {
-  position: relative;
-
-  :deep(.v-input__details) {
-    position: absolute;
-    padding: 0 !important;
-    z-index: 9;
-
-    .v-messages__message {
-      margin-top: 0.25rem;
-      border-radius: 4px;
-      padding: 0.5rem 0.75rem;
-      background: #424242;
-      color: #fff !important;
-    }
-  }
+.accordion-item-title:deep(.v-field) {
+  --v-field-input-padding-top: 0;
 }
 </style>

@@ -26,10 +26,9 @@ test.describe('Empty state', () => {
 });
 
 test.describe('Default state', () => {
-  test('Renders two items with default titles', async ({ page }) => {
+  test('Renders two items by default', async ({ page }) => {
     const display = new Display(page);
     await expect(display.panels).toHaveCount(2);
-    await expect(display.panels.first()).toContainText('Accordion Item Title');
   });
 });
 
