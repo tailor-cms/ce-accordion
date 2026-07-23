@@ -3,6 +3,7 @@ import { pom } from '@tailor-cms/cek-e2e';
 
 export class Edit extends pom.EditPanel {
   readonly root: Locator;
+  readonly expandedPanels: Locator;
   readonly panels: Locator;
   readonly addItemBtn: Locator;
   readonly confirmationDialog: Locator;
@@ -23,32 +24,22 @@ export class Edit extends pom.EditPanel {
     return this.panels.nth(index);
   }
 
-  editBtn(itemIndex: number): Locator {
-    return this.itemAt(itemIndex).getByRole('button', {
-      name: 'Edit title',
-      exact: true,
-    });
+  itemHeader(index: number): Locator {
+    return this.itemAt(index).locator('.v-expansion-panel-title');
   }
 
   deleteBtn(itemIndex: number): Locator {
-    return this.itemAt(itemIndex).getByRole('button', {
+    return this.itemHeader(itemIndex).getByRole('button', {
       name: 'Delete item',
       exact: true,
     });
   }
 
   titleInput(itemIndex: number): Locator {
-    return this.itemAt(itemIndex).getByPlaceholder('Accordion item title...');
+    return this.itemHeader(itemIndex).getByPlaceholder('Title');
   }
 
   addEmbedBtn(itemIndex: number): Locator {
     return this.itemAt(itemIndex).getByRole('button', { name: 'Add content' });
-  }
-
-  saveTitleBtn(itemIndex: number): Locator {
-    return this.itemAt(itemIndex).getByRole('button', {
-      name: 'Save',
-      exact: true,
-    });
   }
 }

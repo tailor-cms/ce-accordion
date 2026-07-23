@@ -7,9 +7,6 @@ import type {
   ElementManifest,
 } from './interfaces';
 
-const id1 = uuid();
-const id2 = uuid();
-
 // Element unique id within the target system (e.g. Tailor)
 export const type = 'ACCORDION';
 
@@ -18,23 +15,17 @@ export const name = 'Accordion';
 
 // Function which inits element state (data property on the Content Element
 // entity)
-export const initState: DataInitializer = (): ElementData => ({
-  embeds: {},
-  items: {
-    [id1]: {
-      id: id1,
-      header: 'Accordion Item Title',
-      body: {},
-      position: 1,
+export const initState: DataInitializer = (): ElementData => {
+  const id1 = uuid();
+  const id2 = uuid();
+  return {
+    embeds: {},
+    items: {
+      [id1]: { id: id1, header: '', body: {}, position: 1 },
+      [id2]: { id: id2, header: '', body: {}, position: 2 },
     },
-    [id2]: {
-      id: id2,
-      header: 'Accordion Item Title',
-      body: {},
-      position: 1,
-    },
-  },
-});
+  };
+};
 
 // Can be loaded from package.json
 export const version = '1.0';

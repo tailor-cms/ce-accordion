@@ -6,9 +6,9 @@
         <VExpansionPanel
           v-for="item in accordionItems"
           :key="item.id"
-          :title="item.header"
           class="border"
         >
+          <VExpansionPanelTitle>{{ item.header }}</VExpansionPanelTitle>
           <VExpansionPanelText>
             <VAlert v-if="!embeds[item.id].length" type="info" variant="tonal">
               No content elements added to this item.

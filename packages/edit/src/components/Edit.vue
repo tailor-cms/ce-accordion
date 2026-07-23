@@ -1,56 +1,46 @@
 <template>
-  <VCard class="tce-accordion" color="grey-lighten-5">
-    <VToolbar class="px-4" color="primary-darken-2" height="36">
-      <VIcon
-        :icon="manifest.ui.icon"
-        color="secondary-lighten-2"
-        size="18"
-        start
-      />
-      <span class="text-title-small">{{ manifest.name }}</span>
-    </VToolbar>
-    <div class="pa-6 text-center">
-      <VExpansionPanels
-        ref="panels"
-        v-model="expanded"
-        rounded="lg"
-        flat
-        multiple
-      >
-        <VExpandTransition v-if="!!accordionItemCount" group>
-          <AccordionItem
-            v-for="item in accordionItems"
-            :key="item.id"
-            :allow-deletion="accordionItemCount > 1"
-            :embed-element-config="embedElementConfig"
-            :embeds="embedsByItem[item.id]"
-            :is-expanded="expanded.includes(item.id)"
-            :is-focused="isFocused"
-            :is-readonly="isReadonly"
-            :item="item"
-            @delete="deleteItem(item.id)"
-            @expand="expanded.push(item.id)"
-            @save="saveItem($event)"
-          />
-        </VExpandTransition>
-      </VExpansionPanels>
-      <VBtn
-        v-if="!isReadonly"
-        class="mt-6"
-        color="primary-darken-4"
-        prepend-icon="mdi-tab-plus"
-        variant="text"
-        @click="addAccordionItem"
-      >
-        Add Accordion Item
-      </VBtn>
-    </div>
-  </VCard>
+  <div class="tce-accordion text-center">
+    <VExpansionPanels
+      ref="panels"
+      v-model="expanded"
+      rounded="lg"
+      flat
+      multiple
+    >
+      <VExpandTransition v-if="!!accordionItemCount" group>
+        <AccordionItem
+          v-for="item in accordionItems"
+          :key="item.id"
+          :allow-deletion="accordionItemCount > 1"
+          :embed-element-config="embedElementConfig"
+          :embeds="embedsByItem[item.id]"
+          :is-expanded="expanded.includes(item.id)"
+          :is-focused="isFocused"
+          :is-readonly="isReadonly"
+          :item="item"
+          class="text-left"
+          @delete="deleteItem(item.id)"
+          @expand="expanded.push(item.id)"
+          @save="saveItem($event)"
+        />
+      </VExpandTransition>
+    </VExpansionPanels>
+    <VBtn
+      v-if="!isReadonly"
+      class="mt-4"
+      prepend-icon="mdi-plus"
+      variant="text"
+      @click="addAccordionItem"
+    >
+      Add Accordion Item
+    </VBtn>
+  </div>
 </template>
 
 <script setup lang="ts">
 import {
   cloneDeep,
+  isEqual,
   isNumber,
   pick,
   pull,
@@ -58,11 +48,15 @@ import {
   sortBy,
   uniqueId,
 } from 'lodash-es';
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import manifest, {
-  Element,
-  ElementData,
-} from '@tailor-cms/ce-accordion-manifest';
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  reactive,
+  ref,
+  watch,
+} from 'vue';
+import { Element, ElementData } from '@tailor-cms/ce-accordion-manifest';
 import Sortable from 'sortablejs';
 import { v4 as uuid } from 'uuid';
 
@@ -97,6 +91,15 @@ const embedsByItem = computed(() =>
   ),
 );
 
+watch(
+  () => props.element.data,
+  (data) => {
+    if (isEqual(data, elementData)) return;
+    Object.assign(elementData, cloneDeep(data));
+    expanded.value = expanded.value.filter((id) => id in elementData.items);
+  },
+);
+
 const saveItem = ({ item, embeds = {} }: any) => {
   elementData.items[item.id] = item;
   Object.assign(elementData.embeds, embeds);
@@ -115,7 +118,7 @@ const addAccordionItem = () => {
   const id = uuid();
   elementData.items[id] = {
     id,
-    header: `Accordion Item Title`,
+    header: '',
     body: {},
     position: accordionItemCount.value + 1,
   };
@@ -155,10 +158,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped>
-.tce-accordion {
-  text-align: left;
-}
-
 :deep(.sortable-ghost) > * {
   visibility: hidden;
 }
