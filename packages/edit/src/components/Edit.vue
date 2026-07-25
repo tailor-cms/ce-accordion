@@ -20,8 +20,8 @@
           :item="item"
           class="text-left"
           @delete="deleteItem(item.id)"
-          @expand="expanded.push(item.id)"
           @save="saveItem($event)"
+          @toggle="toggleItem(item.id)"
         />
       </VExpandTransition>
     </VExpansionPanels>
@@ -81,6 +81,11 @@ const embedsByItem = computed(() =>
     {} as any,
   ),
 );
+
+const toggleItem = (id: string) => {
+  if (expanded.value.includes(id)) pull(expanded.value, id);
+  else expanded.value.push(id);
+};
 
 const saveItem = ({ item, embeds = {} }: any) => {
   elementData.items[item.id] = item;
