@@ -30,8 +30,8 @@ test.describe('Item management', () => {
     const edit = new Edit(page);
     await edit.itemAt(0).hover();
     await edit.deleteBtn(0).click();
-    await expect(edit.confirmationDialog).toBeVisible();
-    await edit.confirmationDialog
+    await expect(edit.deleteItemDialog).toBeVisible();
+    await edit.deleteItemDialog
       .getByRole('button', { name: 'Confirm' })
       .click();
     await expect(edit.panels).toHaveCount(1);

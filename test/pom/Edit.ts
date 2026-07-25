@@ -3,10 +3,9 @@ import { pom } from '@tailor-cms/cek-e2e';
 
 export class Edit extends pom.EditPanel {
   readonly root: Locator;
-  readonly expandedPanels: Locator;
   readonly panels: Locator;
   readonly addItemBtn: Locator;
-  readonly confirmationDialog: Locator;
+  readonly deleteItemDialog: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -15,7 +14,7 @@ export class Edit extends pom.EditPanel {
     this.addItemBtn = this.editor.getByRole('button', {
       name: 'Add Accordion Item',
     });
-    this.confirmationDialog = this.el
+    this.deleteItemDialog = this.el
       .locator('.v-dialog')
       .filter({ hasText: 'Delete accordion item' });
   }
