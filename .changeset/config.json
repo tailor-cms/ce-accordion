@@ -1,8 +1,12 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.0.3/schema.json",
-  "changelog": false,
+  "changelog": "@changesets/cli/changelog",
   "commit": false,
-  "fixed": [["@tailor-cms/ce-accordion-*"]],
+  "fixed": [
+    [
+      "@tailor-cms/ce-accordion-*"
+    ]
+  ],
   "linked": [],
   "access": "public",
   "baseBranch": "main",
