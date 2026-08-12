@@ -5,7 +5,7 @@
       <VExpansionPanelTitle
         v-bind="hoverProps"
         class="pa-2 pr-4"
-        min-height="56"
+        min-height="50"
         readonly
         @click="onTitleClick"
       >
@@ -19,6 +19,7 @@
           </span>
           <VTextField
             v-model="draft.header"
+            :class="{ 'ml-3': isReadonly }"
             :readonly="isReadonly"
             bg-color="transparent"
             class="accordion-item-title"
@@ -40,8 +41,9 @@
               color="error"
               density="comfortable"
               icon="mdi-trash-can-outline"
+              rounded="lg"
               size="small"
-              variant="tonal"
+              variant="text"
               @click.stop="deleteItem"
             />
           </VFadeTransition>
@@ -168,5 +170,9 @@ const deleteItem = () => {
 
 .accordion-item-title:deep(.v-field) {
   --v-field-input-padding-top: 0;
+}
+
+:deep(.v-btn) {
+  --v-hover-opacity: 0.12;
 }
 </style>
