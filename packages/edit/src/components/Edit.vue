@@ -38,15 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  cloneDeep,
-  isEqual,
-  isNumber,
-  pick,
-  pull,
-  reduce,
-  sortBy,
-} from 'lodash-es';
+import { cloneDeep, isEqual, pick, pull, reduce, sortBy } from 'lodash-es';
 import { computed, reactive, ref, watch } from 'vue';
 import { Element, ElementData } from '@tailor-cms/ce-accordion-manifest';
 import { useDraggable } from 'vue-draggable-plus';
@@ -69,7 +61,13 @@ const expanded = ref<string[]>([]);
 const elementData = reactive<ElementData>(cloneDeep(props.element.data));
 const panels = ref();
 
-const accordionItems = computed(() => sortBy(elementData.items, 'position'));
+const accordionItems = computed({
+  get: () => sortBy(elementData.items, 'position'),
+  set: (reordered) => {
+    reordered.forEach(({ id }, i) => (elementData.items[id].position = i + 1));
+    emit('save', elementData);
+  },
+});
 const accordionItemCount = computed(() => accordionItems.value.length);
 const embedsByItem = computed(() =>
   reduce(
@@ -113,27 +111,9 @@ const addAccordionItem = () => {
   emit('save', elementData);
 };
 
-const calculateNewPosition = (oldIndex: number, newIndex: number) => {
-  if (!newIndex) return accordionItems.value[newIndex].position / 2;
-  if (newIndex + 1 === accordionItemCount.value) {
-    return accordionItems.value[newIndex].position + 1;
-  }
-  const direction = oldIndex > newIndex ? -1 : 1;
-  const prevPos = accordionItems.value[newIndex].position;
-  const nextPos = accordionItems.value[newIndex + direction].position;
-  return (nextPos + prevPos) / 2;
-};
-
-useDraggable(panels, {
+useDraggable(panels, accordionItems, {
   animation: 150,
   handle: '.accordion-drag-handle',
-  onUpdate: ({ oldIndex, newIndex }) => {
-    if (!isNumber(newIndex) || !isNumber(oldIndex)) return;
-    const position = calculateNewPosition(oldIndex, newIndex);
-    const currentItem = accordionItems.value[oldIndex];
-    Object.assign(elementData.items[currentItem.id], { position });
-    emit('save', elementData);
-  },
 });
 
 watch(
