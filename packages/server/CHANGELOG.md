@@ -1,5 +1,13 @@
 # @tailor-cms/ce-accordion-server
 
+## 2.1.1
+
+### Patch Changes
+
+- Cleanup draggable handler.
+- Updated dependencies
+  - @tailor-cms/ce-accordion-manifest@2.1.1
+
 ## 2.1.0
 
 ### Minor Changes
